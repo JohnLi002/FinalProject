@@ -3,10 +3,8 @@
 import socket
 
 def messageAll(connected, msg):
-    i = len(connected)
-    response = str(i) + msg
     for x in connected:
-        x.send(response.encode())
+        x.send(msg.encode())
 
 def check(connected, check):
     for x in connected:
@@ -41,8 +39,7 @@ def server_program():
         print(username)
         names.append(username)
         addresses.append(conn)
-    
-    messageAll(addresses, " people have been connected")
+        messageAll(addresses, len(addresses) + "/" + amount + " people are connected")
     
     while amount > 0: #while people are within the server
         data = addresses[i%amount].recv(1024).decode()
