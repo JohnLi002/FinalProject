@@ -44,6 +44,8 @@ def server_program():
     messageAll(addresses, "Welcome to the game!")
     print("Welcome to the game!")
     
+    
+    
     while amount > 0: #while people are within the server
         data = addresses[i%amount].recv(1024).decode()
         if not data:

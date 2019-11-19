@@ -21,11 +21,11 @@ class BossDragon:
         num = int(random.random()*len(self.actions))
         action = self.actions[num]
         if(action == 'Tail Swipe'):
-            return 10
+            return action, 10
         elif(action == 'Dragon Breath'):
-            return 15
+            return action, 15
         else:
-            return 5
+            return action, 5
     def getHealth(self):
         return self.health
         

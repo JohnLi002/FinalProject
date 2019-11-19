@@ -12,4 +12,6 @@ print(boss.health)
 boss.lossHealth(10)
 print(boss.health)
 
-print(boss.dealDamage())
+action, num = boss.dealDamage()
+print(action)
+print(num)
