@@ -39,7 +39,10 @@ def server_program():
         print(username)
         names.append(username)
         addresses.append(conn)
-        messageAll(addresses, len(addresses) + "/" + amount + " people are connected")
+        messageAll(addresses, str(len(addresses)) + "/" + str(amount) + " people are connected")
+    
+    messageAll(addresses, "Welcome to the game!")
+    print("Welcome to the game!")
     
     while amount > 0: #while people are within the server
         data = addresses[i%amount].recv(1024).decode()

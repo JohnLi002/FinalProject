@@ -12,6 +12,13 @@ def client_program():#'10.220.112.48'
     message = input("Username: ")  # take input
     client_socket.send(message.encode())
     
+    data = client_socket.recv(1024).decode()  # receive response
+    print(data)
+    
+    while(data[0] != data[2]):
+        data = client_socket.recv(1024).decode()  # receive response
+        print(data)
+    
     while message.lower().strip() != 'bye':
         data = client_socket.recv(1024).decode()  # receive response
         
