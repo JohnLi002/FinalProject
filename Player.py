@@ -19,3 +19,4 @@ class Player:
          roll = random.randint(1, 7)
          if roll > 2:
              return 10
+         return 0

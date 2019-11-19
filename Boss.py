@@ -19,5 +19,6 @@ class Boss:
          roll = random.randint(1, 7)
          if roll > 5:
              return 50
+         return 0
     
     

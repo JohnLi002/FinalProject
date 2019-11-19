@@ -1,8 +1,8 @@
 from Boss import *
 from Player import *
 
-p1 = Player()
-b = Boss()
+p1 = Player(100)
+b = Boss(1000)
 
 print("Player Health: ", p1.getHealth())
 print("Boss Health: ", b.getHealth())
@@ -14,3 +14,4 @@ while(p1.getHealth() > 0):
     b.takeDamage(p1.attack())
     print("Player Health: ", p1.getHealth())
     print("Boss Health: ", b.getHealth())
+    turn += 1
