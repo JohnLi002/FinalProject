@@ -58,7 +58,7 @@ def server_program():
             messageAll(addresses, globalMsg)
         else:
             print("from [" + names[i%amount] + "]: " + str(data))
-            data = input(' >>>>>> ')
+            data = input(' >>>[You]: ')
             addresses[i%amount].send(data.encode())  # send data to the client
             i += 1
 
