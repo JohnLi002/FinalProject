@@ -5,13 +5,7 @@ Created on Tue Nov 19 16:00:30 2019
 @author: lij19
 """
 
-import BossDragon
+import random
 
-boss = BossDragon.BossDragon(100)
-print(boss.health)
-boss.lossHealth(10)
-print(boss.health)
-
-action, num = boss.dealDamage()
-print(action)
-print(num)
+num = int(random.randint(1,7))
+print(str(num))

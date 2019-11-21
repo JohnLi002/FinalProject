@@ -7,25 +7,35 @@ def client_program():#'10.220.112.48'
 
     client_socket = socket.socket()  # instantiate
     client_socket.connect((host, port))  # connect to the server
-
+    # data = server string
+    # message = client string
     
-    message = input("Username: ")  # take input
-    client_socket.send(message.encode())
+    message = input("Username: ")  # take input which will be the username associated with the host
+    client_socket.send(message.encode()) #sends server the message
     
-    data = client_socket.recv(1024).decode()  # receive response
+    data = client_socket.recv(1024).decode() #after join, there is an initial message of how you just joined
     print(data)
     
-    while(data[0] != data[2]):
-        data = client_socket.recv(1024).decode()  # receive response
-        print(data)
+    while(data[0] != data[2]): #Within the joining message the 1st and 3rd parts there are numbers 
+                               #that represent the queue. If the numbers are the same, the queue is filled
+        data = client_socket.recv(1024).decode()  # receive any othere joining messages which appear every time someone joings
+        print(data) #prints out said message
     
-    while message.lower().strip() != 'bye':
-        data = client_socket.recv(1024).decode()  # receive response
+    data = client_socket.recv(1024).decode() #the game will send message "Welcome to the game!"
+    print(data) #prints out previously said message
+    
+    while message.lower().strip() != 'bye': #user can type until user says goodbye
+        data = client_socket.recv(1024).decode() #receives dragons actions
+        print(data) #prints said mmessage
         
-        print('Received from server: ' + data)  # show in terminal
-
-        message = input(" -> ")  # again take input
-        client_socket.send(message.encode())
+        data = client_socket.recv(1024).decode()  # receive player's current health
+        print(data)  # prints current health
+        
+        message = input(" -> ")  # take input that the player says for the action
+        client_socket.send(message.encode()) # sends the input
+        
+        data = client_socket.recv(1024).decode()  # receives dragon's new health
+        print(data)  # prints out said message
 
     
     #client_socket.send(message) #send bye message
