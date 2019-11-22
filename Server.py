@@ -59,26 +59,28 @@ def server_program():
         chosen = int(random.random() * amount) # random number from array to attack
         bossAction, damage = boss.dealDamage() # boss deals damage and says what was the attack
         players[chosen].takeDamage(int(damage)) # player now takes damage
+
         
         message = "The dragon used " + bossAction
-        print(message) # prints out what the dragon did
-        addresses[chosen].send(message.encode()) #also sends the message to the client
+        print(message + " on " + players[chosen].getName()) # prints out what the dragon did
+        messageAll(addresses, message)
+        if(players[chosen].getHealth() <= 0):
+            players, amount = death(players, addresses)
+        else:
+            message = players[chosen].getName() + ": " + str(players[chosen].getHealth())
+            print(message) #prints out the player's new health
+            addresses[chosen].send(message.encode())
         
-        message = players[chosen].getName() + ": " + str(players[chosen].getHealth())
-        print(message) #prints out the player's new health
-        addresses[chosen].send(message.encode())
-        
-        action = addresses[i%amount].recv(1024).decode()
-        print(action.lower().strip())
-        if(str(action).lower().strip() == 'attack'):
-            print(players[i%amount].attack())
-            boss.lossHealth(players[i%amount].attack())
+            action = addresses[i%amount].recv(1024).decode()
+            print(action.lower().strip())
+            if(str(action).lower().strip() == 'attack'):
+                print(players[i%amount].attack())
+                boss.lossHealth(players[i%amount].attack())
        
-        players, amount = death(players, addresses)
-        message = "Boss: " + str(boss.getHealth())
-        print(message)
-        addresses[chosen].send(message.encode())
-        i += 1
+            message = "Boss: " + str(boss.getHealth())
+            print(message)
+            messageAll(addresses, message)
+            i += 1
     
     conn.close()  # close the connection
 
