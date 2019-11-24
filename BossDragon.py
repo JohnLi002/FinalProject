@@ -1,17 +1,25 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Nov 12 17:31:31 2019
+import random
 
-@author: lij19
-"""
 
-#simulation of a boss battle
-Name = "Dragon"
-A = 100 #nummber represents health
-end = False
+class BossDragon:
+    actions = ["Tail Swipe", "Dragon Breath", "Glare"]
+    health = 0
+    
+    def __init__(self,hp):
+       self.health = hp
+        
+    def lossHealth(self, num):
+        self.health -= num
 
-Actions = ["Tail Swipe", "Dragon Breath", "Glare"]
-
-while(A > 0):
-    print("hi")
-    A -= 10
+    def dealDamage(self):
+        num = int(random.random()*len(self.actions))
+        action = self.actions[num]
+        if(action == 'Tail Swipe'):
+            return action, 10
+        elif(action == 'Dragon Breath'):
+            return action, 15
+        else:
+            return action, 5
+        
+    def getHealth(self):
+        return self.health
