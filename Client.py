@@ -24,19 +24,24 @@ def client_program():#'10.220.112.48'
     data = client_socket.recv(1024).decode() #the game will send message "Welcome to the game!"
     print(data) #prints out previously said message
     
+    
+    data = client_socket.recv(1024).decode() #receives dragons actions
+    print(data) #prints said mmessage
+    
     while message.lower().strip() != 'bye': #user can type until user says goodbye
-        data = client_socket.recv(1024).decode() #receives dragons actions
-        print(data) #prints said mmessage
+        while True:
+            message = input(" -> ")  # take input that the player says for the action
+            client_socket.send(message.encode()) # sends the input
+            data = client_socket.recv(1024).decode()
+            print(data)
+            if(data[0:7] != 'Command'):
+                break
         
-        data = client_socket.recv(1024).decode()  # receive player's current health
-        print(data)  # prints current health
-        
-        message = input(" -> ")  # take input that the player says for the action
-        client_socket.send(message.encode()) # sends the input
-        
-        data = client_socket.recv(1024).decode()  # receives dragon's new health
-        print(data)  # prints out said message
-
+        while True:
+            data = client_socket.recv(1024).decode()  # receive player's current health
+            print(data)
+            if(data[0] == '['):
+                break
     
     #client_socket.send(message) #send bye message
     client_socket.close()  # close the connection

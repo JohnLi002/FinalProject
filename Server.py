@@ -6,12 +6,26 @@ def messageAll(connected, msg):
     for x in connected:
         x.send(msg.encode())
 
-def death(player, connections):
+def updateHealth(players):
+    message = ""
+    for x in players:
+        string = "-" + x.getName() + ": " + x.getHealth() + "\n"
+        message += str(string)
+        
+    return message
+
+def commands (conn):
+    commandHelp = "Commands:\n1 = attack\n2 = block"
+    conn.send(commandHelp.encode())
+
+def death(player, connections, defense):
     i = 0
     for p in player:
         if(p.getHealth() <= 0):
+            p.send("Dead".encode())
             messageAll(connections, p.getName() + " has died")
             del(player[i])
+            del(defense[i])
         else:
             i += 1
     
@@ -36,6 +50,7 @@ def server_program():
     #names = [] #list of usernames that will correspond to addresses
     players = [] ###Testing
     i = 0 #the counter that will go through the list
+    block = []
     
     while(len(addresses) != amount):
         conn, address = server_socket.accept()
@@ -45,6 +60,7 @@ def server_program():
         #names.append(username)
         addresses.append(conn)
         players.append(Player.Player(100, username)) ###Testing
+        block.append(False)
         messageAll(addresses, str(len(addresses)) + "/" + str(amount) + " players are connected")
     
     messageAll(addresses, "Welcome to the game!")
@@ -57,31 +73,48 @@ def server_program():
             break
         
         chosen = int(random.random() * amount) # random number from array to attack
+        message = players[chosen].getName() + "'s turn"
+        print(message)
+        addresses[i%amount].send(message.encode())
+        
+       
+        while(True): #this loop continuously receives actions
+            action = addresses[i%amount].recv(1024).decode()
+            print(action.lower().strip())
+            
+            if(str(action).lower().strip() == 'attack'):
+                print(players[i%amount].attack())
+                boss.lossHealth(players[i%amount].attack())
+                break
+            elif(str(action).lower().strip() == 'block'):
+                block[i%amount] = True;
+                break
+            elif(str(action).lower().strip() == 'health'):
+                updateHealth(players)
+            else:
+                commands(addresses[i%amount])
+        
+        message = "Boss: " + str(boss.getHealth())
+        print(message)
+        messageAll(addresses, message)
+        if(players[chosen].getHealth() <= 0):
+            players, amount = death(players, addresses)
+        i += 1
+        
         bossAction, damage = boss.dealDamage() # boss deals damage and says what was the attack
+        if(block[chosen]):
+            messageAll(addresses, "**" + players[chosen].getName() + " has blocked the attack and miligated the damage!")
+            damage -= int(random.random()*10)
+            block[chosen] = False
         players[chosen].takeDamage(int(damage)) # player now takes damage
-
         
         message = "The dragon used " + bossAction
         print(message + " on " + players[chosen].getName()) # prints out what the dragon did
         messageAll(addresses, message)
-        if(players[chosen].getHealth() <= 0):
-            players, amount = death(players, addresses)
-        else:
-            message = players[chosen].getName() + ": " + str(players[chosen].getHealth())
-            print(message) #prints out the player's new health
-            addresses[chosen].send(message.encode())
+        message = "*" + players[chosen].getName() + ": " + str(players[chosen].getHealth())
+        print(message) #prints out the player's new health
+        addresses[chosen].send(message.encode())
         
-            action = addresses[i%amount].recv(1024).decode()
-            print(action.lower().strip())
-            if(str(action).lower().strip() == 'attack'):
-                print(players[i%amount].attack())
-                boss.lossHealth(players[i%amount].attack())
-       
-            message = "Boss: " + str(boss.getHealth())
-            print(message)
-            messageAll(addresses, message)
-            i += 1
-    
     conn.close()  # close the connection
 
         
