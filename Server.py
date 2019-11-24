@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import socket, BossDragon, Player, random
+import socket, BossDragon, Player, random, time
 
 # Message All Connected Players
 def messageAll(connected, msg):
@@ -87,13 +87,14 @@ def server_program():
         if(amount == 0): 
             break
         
-        # Chooses random player to attack
+        # Notify Start of Player's Turn
         chosen = int(random.random() * amount) # random number from array to attack
+        time.sleep(1)
         message = players[chosen].getName() + "'s turn"
         print(message)
         addresses[i%amount].send(message.encode())
         
-        # Continuously receives actions
+        # Receive Player Input
         while(True): 
             action = addresses[i%amount].recv(1024).decode()
             print(action.lower().strip())
@@ -136,9 +137,16 @@ def server_program():
         message = "The dragon used " + bossAction
         print(message + " on " + players[chosen].getName()) # prints out what the dragon did
         messageAll(addresses, message)
-        message = "*" + players[chosen].getName() + ": " + str(players[chosen].getHealth())
-        print(message) 
-        addresses[chosen].send(message.encode())
+        
+        # Prints Player Current Health and send status
+        if players[chosen].getHealth() > 0:
+            message = "*" + players[chosen].getName() + ": " + str(players[chosen].getHealth())
+            print(message) 
+            addresses[chosen].send(message.encode())
+        else:
+            message = "*" + players[chosen].getName() + ": Died!"
+            print(message) 
+            addresses[chosen].send(message.encode())
     
     conn.close()  # close the connection
 # End Server Program

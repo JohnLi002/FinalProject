@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import socket
+import socket, time
 
 # Start CLient Program
 def client_program():
@@ -14,7 +14,8 @@ def client_program():
     client_socket.connect((host, port))  
    
     # Send Server Name
-    message = input("Username: ")  
+    message = input("Username: ")
+    username = message
     client_socket.send(message.encode())
     
     # Print Connection Status
@@ -36,8 +37,22 @@ def client_program():
     data = client_socket.recv(1024).decode() 
     print(data) 
     
+    # First Player Action
+    message = input(" -> ")  
+    client_socket.send(message.encode())
+    
     # Continues until message is "bye" or ?(Healh < 0)
-    while message.lower().strip() != 'bye': 
+    while True: 
+        
+        # Receives player current health
+        while True:
+            data = client_socket.recv(1024).decode()  
+            print(data)
+            if(data[0] == '['):
+                break
+        
+        if data == "*[" + username + "]: Died!":
+            break
         
         # Client Player Input
         while True:
@@ -46,13 +61,6 @@ def client_program():
             data = client_socket.recv(1024).decode()
             print(data)
             if(data[0:7] != 'Command'):
-                break
-        
-        # Receives player current health
-        while True:
-            data = client_socket.recv(1024).decode()  
-            print(data)
-            if(data[0] == '['):
                 break
     
     #client_socket.send(message) #send bye message
