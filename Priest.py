@@ -5,6 +5,15 @@ Created on Sun Nov 17 12:21:17 2019
 @author: leix
 """
 
-HP = 120
+from Player import Player
 
-Skills = ["Heal","Holy Glader","Stat Boost"]
+class Priest(Player): 
+    def __init__(self, health, name):
+        super().__init__(health, name)
+        self.Skills = ["Heal","Holy Glader","Stat Boost"]
+        
+    def getSkillList(self):
+        result = "Skills: \n"
+        for x in self.Skills:
+            result += "-" + x + "\n"
+        return result

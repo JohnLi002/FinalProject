@@ -4,9 +4,10 @@ Created on Tue Nov 19 16:00:30 2019
 
 @author: lij19
 """
+import Ranger, Priest
 
-finish = True
-print('hi')
+r = Ranger.Ranger(1,"hi")
+p = Priest.Priest(1, "hi2")
 
-if finish:
-    print('bye')
+print(r.getSkillList())
+print(p.getSkillList())
