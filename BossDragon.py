@@ -8,12 +8,9 @@ import random
 
 
 class BossDragon:
-<<<<<<< Updated upstream
-    actions = ["Tail Swipe", "Dragon Breath", "Glare"]
-=======
+
     actions = ["Tail Swipe", "Dragon Breath", "Bite"]
     health = 0
->>>>>>> Stashed changes
     
     def __init__(self, health):
         self.health = health
