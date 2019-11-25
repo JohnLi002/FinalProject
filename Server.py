@@ -16,8 +16,8 @@ def updateHealth(players):
         
     return message
 
-def commands (conn):
-    commandHelp = "Commands:\n1 = attack\n2 = block"
+def commands (conn): 
+    commandHelp = "Commands:\n1 = attack\n2 = block\n3 = check health"
     conn.send(commandHelp.encode())
 
 def death(player, connections, defense):
@@ -80,18 +80,19 @@ def server_program():
             action = connections[i%amount].recv(1024).decode()
             print(action.lower().strip())
             
-            if(str(action).lower().strip() == 'attack'):
+            if(str(action).lower().strip() == '1'):
                 print(players[i%amount].attack())
                 boss.lossHealth(players[i%amount].attack())
                 break
-            elif(str(action).lower().strip() == 'block'):
+            elif(str(action).lower().strip() == '2'):
                 block[i%amount] = True;
                 break
-            elif(str(action).lower().strip() == 'health'):
+            elif(str(action).lower().strip() == '3'):
                 connections[i%amount].send(updateHealth(players).encode())
             else:
                 commands(connections[i%amount])
         
+        time.sleep(1)
         message = "Boss: " + str(boss.getHealth())
         print(message)
         messageAll(connections, message)
