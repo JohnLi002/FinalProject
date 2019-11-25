@@ -2,7 +2,7 @@
 
 import socket
 def client_program():#'10.220.112.48'
-    host = socket.gethostname()  # as both code is running on same pc
+    host = socket.gethostname()  # get IP address of server
     port = 5000  # socket server port number
 
     client_socket = socket.socket()  # instantiate
@@ -10,7 +10,9 @@ def client_program():#'10.220.112.48'
     # data = server string
     # message = client string
     
-    message = input("Username: ")  # take input which will be the username associated with the host
+    finished = False
+    username = "[" + input("Username: ") + "]" # take input which will be the username associated with the host
+    message = username #the username is now the input
     client_socket.send(message.encode()) #sends server the message
     
     data = client_socket.recv(1024).decode() #after join, there is an initial message of how you just joined
@@ -25,25 +27,35 @@ def client_program():#'10.220.112.48'
     print(data) #prints out previously said message
     
     
-    data = client_socket.recv(1024).decode() #receives dragons actions
+    data = client_socket.recv(1024).decode() #receives whose turn it is initially
     print(data) #prints said mmessage
     
-    while message.lower().strip() != 'bye': #user can type until user says goodbye
-        while True:
-            message = input(" -> ")  # take input that the player says for the action
-            client_socket.send(message.encode()) # sends the input
-            data = client_socket.recv(1024).decode()
-            print(data)
-            if(data[0:7] != 'Command'):
-                break
+    while True: #This loop continues the game
+        if finished: #checks to see if you are dead, if you are the loop ends and the socket is closed
+            print("The dragon has killed you")
+            client_socket.close()
+            break
+        if(data[0:len(username)] == username):
+            while True:
+                message = input(" -> ")  # take input that the player says for the action
+                client_socket.send(message.encode()) # sends the input
+                data = client_socket.recv(1024).decode()
+                print(data)
+                if(data[0:7] != 'Command' and data[0] != '-'):
+                    break
         
         while True:
             data = client_socket.recv(1024).decode()  # receive player's current health
+            if(data == 'Dead'):
+                finished = True
+                data = client_socket.recv(1024).decode()
+                print(data)
+                break
             print(data)
             if(data[0] == '['):
                 break
     
     #client_socket.send(message) #send bye message
-    client_socket.close()  # close the connection
+    #client_socket.close()  # close the connection
 if __name__ == '__main__':
     client_program()

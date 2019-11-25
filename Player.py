@@ -30,4 +30,4 @@ class Player:
          return 0
      
     def getName(self):
-        return "["+self.name +"]"
+        return self.name
