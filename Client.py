@@ -43,7 +43,7 @@ def client_program():#'10.220.112.48'
                 client_socket.send(message.encode()) # sends the input
                 data = client_socket.recv(1024).decode()
                 print(data)
-                if(data[0:7] != 'Command' and data[0] != '-'):
+                if(data[0:7] != 'Command' and data[0] != '-'): #If there is a return that isn't a command or given health, break loop
                     break
         
         while True:
