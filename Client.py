@@ -34,24 +34,29 @@ def client_program():#'10.220.112.48'
             print("The dragon has killed you")
             client_socket.close()
             break
-        if(data[0:len(username)] == username):
+        #At the very start the server returns whose turn it is. The client identifies if it is
+        #their turn by checking if the first part of the message is their name. If it is their
+        #name then then they are allowed actions
+        if(data[0:len(username)] == username): 
             while True:
                 message = input(" -> ")  # take input that the player says for the action
                 client_socket.send(message.encode()) # sends the input
                 data = client_socket.recv(1024).decode()
                 print(data)
-                if(data[0:7] != 'Command' and data[0] != '-'):
+                if(data[0:7] != 'Command' and data[0] != '-'): #If there is a return that isn't a command or given health, break loop
                     break
         
         while True:
-            data = client_socket.recv(1024).decode()  # receive player's current health
-            if(data == 'Dead'):
-                finished = True
-                data = client_socket.recv(1024).decode()
-                print(data)
-                break
+            data = client_socket.recv(1024).decode()  #messages and continues until the next turn is identified
+            
+            if(data == 'Dead'): #If the player is attacked and dies, the client picks up this special message
+                finished = True #Makes this boolean true
+                data = client_socket.recv(1024).decode() #prints next message
+                print(data) 
+                break #ends this loop to restart the bigger while loop
+            
             print(data)
-            if(data[0] == '['):
+            if(data[0] == '['): #The client identifies the '[' to understands if it is the next turn
                 break
     
     #client_socket.send(message) #send bye message
