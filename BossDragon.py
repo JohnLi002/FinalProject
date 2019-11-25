@@ -8,24 +8,24 @@ import random
 
 
 class BossDragon:
-
     actions = ["Tail Swipe", "Dragon Breath", "Bite"]
     health = 0
     
-    def __init__(self, health):
-        self.health = health
-        
+    def __init__(self,hp):
+       self.health = hp
         
     def lossHealth(self, num):
         self.health -= num
 
-    def dealDamage(attack):
-        num = int(random()*len(attack))
-        action = attack[num]
+    def dealDamage(self):
+        num = int(random.random()*len(self.actions))
+        action = self.actions[num]
         if(action == 'Tail Swipe'):
-            return 10
+            return action, 10
         elif(action == 'Dragon Breath'):
-            return 15
+            return action, 15
         else:
-            return 5
+            return action, 5
+    def getHealth(self):
+        return self.health
         
