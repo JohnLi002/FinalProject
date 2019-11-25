@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
-
 import socket
+
 def client_program():#'10.220.112.48'
     host = socket.gethostname()  # get IP address of server
     port = 5000  # socket server port number
@@ -57,5 +56,6 @@ def client_program():#'10.220.112.48'
     
     #client_socket.send(message) #send bye message
     #client_socket.close()  # close the connection
+    
 if __name__ == '__main__':
     client_program()

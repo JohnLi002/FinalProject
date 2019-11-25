@@ -4,6 +4,7 @@
 """
 import socket, BossDragon, Player, random, time
 
+
 def messageAll(connected, msg):
     for x in connected:
         x.send(msg.encode())
@@ -35,7 +36,7 @@ def death(player, connections, defense):
     return player, defense, connections
 
 def server_program():
-    # get the hostname
+    # Server Socket
     host = socket.gethostname()
     port = 5000
     server_socket = socket.socket()  # get instance
@@ -120,6 +121,7 @@ def server_program():
             amount = len(connections)
         i += 1
         
+
     conn.close()  # close the connection
 
 if __name__ == '__main__':
