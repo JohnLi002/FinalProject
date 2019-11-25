@@ -25,13 +25,14 @@ def death(player, connections, defense):
     for p in player:
         if(p.getHealth() <= 0):
             connections[i].send("Dead".encode())
-            messageAll(connections, p.getName() + " has died")
+            messageAll(connections,"#" + p.getName() + " has died")
             del(player[i])
             del(defense[i])
+            del(connections[i])
         else:
             i += 1
     
-    return player, i, defense
+    return player, defense, connections
 
 def server_program():
     # get the hostname
@@ -41,11 +42,11 @@ def server_program():
     server_socket.bind((host, port))  # bind host address and port together
     # configure how many client the server can listen simultaneously
     
-    amount = 1 #the amount of people that are within the server
+    amount = 2 #the amount of people that are within the server
     server_socket.listen(amount) #how many people will be connected at once. This counter closes when a socket closes
     connections = [] #list of connections
     #names = [] #list of usernames that will correspond to addresses
-    players = [] ###Testing
+    players = []
     i = 0 #the counter that will go through the list
     block = []
     
@@ -63,7 +64,6 @@ def server_program():
     messageAll(connections, "Welcome to the game!")
     print("Welcome to the game!")
     
-    ###Everything below here is a test
     boss = BossDragon.BossDragon(100)
     while(boss.getHealth() > 0): #continues until dragon is defeated
         if(amount == 0): #alternate end, players are defeated
@@ -71,9 +71,9 @@ def server_program():
         
         chosen = int(random.random() * amount) # random number from array to attack
         time.sleep(1)
-        message = players[chosen].getName() + "'s turn"
+        message = players[i%amount].getName() + "'s turn"
         print(message)
-        connections[i%amount].send(message.encode())
+        messageAll(connections,message)
         
        
         while(True): #this loop continuously receives actions
@@ -116,7 +116,8 @@ def server_program():
         
         connections[chosen].send(message.encode())
         if(players[chosen].getHealth() <= 0):
-            players, amount, block = death(players, connections, block)
+            players, block, connections = death(players, connections, block)
+            amount = len(connections)
         i += 1
         
     conn.close()  # close the connection
