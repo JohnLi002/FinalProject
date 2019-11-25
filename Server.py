@@ -1,64 +1,126 @@
-import socket, random
+# -*- coding: utf-8 -*-
+"""
+@author John Li
+"""
+import socket, BossDragon, Player, random, time
+
 
 def messageAll(connected, msg):
     for x in connected:
         x.send(msg.encode())
 
-def check(connected, check):
-    for x in connected:
-        if x is check:
-            return True
-    print("something")
-    return False
+def updateHealth(players):
+    message = ""
+    for x in players:
+        string = "-" + x.getName() + ": " + str(x.getHealth()) + "\n"
+        message += str(string)
+        
+    return message
+
+def commands (conn): 
+    commandHelp = "Commands:\n1 = attack\n2 = block\n3 = check health"
+    conn.send(commandHelp.encode())
+
+def death(player, connections, defense):
+    i = 0
+    for p in player:
+        if(p.getHealth() <= 0):
+            connections[i].send("Dead".encode())
+            messageAll(connections,"#" + p.getName() + " has died")
+            del(player[i])
+            del(defense[i])
+            del(connections[i])
+        else:
+            i += 1
+    
+    return player, defense, connections
 
 def server_program():
     # Server Socket
     host = socket.gethostname()
-    port = 5000  
-    server_socket = socket.socket()  
-    server_socket.bind((host, port))  
+    port = 5000
+    server_socket = socket.socket()  # get instance
+    server_socket.bind((host, port))  # bind host address and port together
+    # configure how many client the server can listen simultaneously
     
-    amount = int(input("How many people allowed: ")) 
-    server_socket.listen(amount) 
-    
-    addresses = [] #list of connections
-    names = [] #list of usernames that will correspond to addresses
-    
+    amount = 2 #the amount of people that are within the server
+    server_socket.listen(amount) #how many people will be connected at once. This counter closes when a socket closes
+    connections = [] #list of connections
+    #names = [] #list of usernames that will correspond to addresses
+    players = []
     i = 0 #the counter that will go through the list
-       
-    # Receives all players
-    while(len(addresses) != amount):
+    block = []
+    
+    while(len(connections) != amount):
         conn, address = server_socket.accept()
         print("Connection from: " + str(address))
         username = conn.recv(1024).decode()
         print(username)
-        names.append(username)
-        addresses.append(conn)
-        messageAll(addresses, str(len(addresses)) + "/" + str(amount) + " people are connected")
+        #names.append(username)
+        connections.append(conn)
+        players.append(Player.Player(1, username)) ###Testing
+        block.append(False) #question is the block function really a good idea?
+        messageAll(connections, str(len(connections)) + "/" + str(amount) + " players are connected")
     
-    messageAll(addresses, "Welcome to the game!")
+    messageAll(connections, "Welcome to the game!")
     print("Welcome to the game!")
-   
     
-    # While players are still in game
-    while amount > 0: 
-        
-        data = addresses[i%amount].recv(1024).decode()
-        if not data:
-            # if data is not received break
+    boss = BossDragon.BossDragon(100)
+    while(boss.getHealth() > 0): #continues until dragon is defeated
+        if(amount == 0): #alternate end, players are defeated
             break
-        if data == 'bye': #if a user leaves
-            globalMsg = "[" + names[i%amount] + "] has left the server"
-            print(globalMsg)
-            del(names[i%amount])
-            del(addresses[i%amount])
-            amount -= 1
-            messageAll(addresses, globalMsg)
-        else:
-            print("from [" + names[i%amount] + "]: " + str(data))
-            data = input(' >>>>>> ')
-            addresses[i%amount].send(data.encode())  # send data to the client
-            i += 1
+        
+        chosen = int(random.random() * amount) # random number from array to attack
+        time.sleep(1)
+        message = players[i%amount].getName() + "'s turn"
+        print(message)
+        messageAll(connections,message)
+        
+       
+        while(True): #this loop continuously receives actions
+            action = connections[i%amount].recv(1024).decode()
+            print(action.lower().strip())
+            
+            if(str(action).lower().strip() == '1'):
+                print(players[i%amount].attack())
+                boss.lossHealth(players[i%amount].attack())
+                break
+            elif(str(action).lower().strip() == '2'):
+                block[i%amount] = True;
+                break
+            elif(str(action).lower().strip() == '3'):
+                connections[i%amount].send(updateHealth(players).encode())
+            else:
+                commands(connections[i%amount])
+        
+        time.sleep(1)
+        message = "Boss: " + str(boss.getHealth())
+        print(message)
+        messageAll(connections, message)
+        
+        
+        bossAction, damage = boss.dealDamage() # boss deals damage and says what was the attack
+        if(block[chosen]):
+            messageAll(connections, "**" + players[chosen].getName() + " has blocked the attack and miligated the damage!")
+            damage -= int(random.random()*10)
+            block[chosen] = False
+        players[chosen].takeDamage(int(damage)) # player now takes damage
+        time.sleep(1) #to make sure the client is not overwelmed
+        
+        message = "The dragon used " + bossAction
+        print(message + " on " + players[chosen].getName()) # prints out what the dragon did
+        messageAll(connections, message)
+        
+        time.sleep(1)
+        message = "*" + players[chosen].getName() + ": " + str(players[chosen].getHealth())
+        print(message) #prints out the player's new health
+        
+        connections[chosen].send(message.encode())
+        if(players[chosen].getHealth() <= 0):
+            players, block, connections = death(players, connections, block)
+            amount = len(connections)
+        i += 1
+        
 
     conn.close()  # close the connection
 
