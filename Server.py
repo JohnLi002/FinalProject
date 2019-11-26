@@ -58,13 +58,22 @@ def server_program():
     connections = []
     players = []
     while(len(connections) != amount):
+        
+        # Get Connection and Username 
         conn, address = server_socket.accept()
         print("Connection from: " + str(address))
         username = conn.recv(1024).decode()
         print(username)
         connections.append(conn)
-        players.append(Player.Player(1, username)) ###Testing
-        block.append(False) #Question is the block function really a good idea?
+        
+        ### Testing
+        # Create Player Objects
+        players.append(Player.Player(1, username)) 
+        
+        #Question: is the block function really a good idea?
+        block.append(False) 
+        
+        # Message all players someone connected
         messageAll(connections, str(len(connections)) + "/" + str(amount) + " players are connected")
     
     # Message all players start of game
@@ -89,6 +98,7 @@ def server_program():
         
         # Receive Player Action
         while True: 
+            
             action = connections[i%amount].recv(1024).decode()
             print(action.lower().strip())
             
