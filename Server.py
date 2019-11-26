@@ -40,7 +40,7 @@ def server_program():
     # Initalize Server Socket
     host = socket.gethostname()
     port = 5000
-    server_socket = socket.socket()  
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  
     server_socket.bind((host, port))  #
     
     # Configure max allowed connections

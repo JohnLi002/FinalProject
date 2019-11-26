@@ -7,7 +7,7 @@ def client_program():
     # Initalize Client Socket
     host = socket.gethostname()  
     port = 5000  
-    client_socket = socket.socket() 
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
     client_socket.connect((host, port))  
     
     # data = server string
