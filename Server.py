@@ -44,7 +44,8 @@ def server_program():
     server_socket.bind((host, port))  #
     
     # Configure max allowed connections
-    amount = 2 
+    amount = int(input("How many players allowed? ")) 
+    print("Waiting for connections...\n")
     server_socket.listen(amount) 
     
     # Counter to loop through connections
@@ -112,8 +113,8 @@ def server_program():
         # Boss Action
         bossAction, damage = boss.dealDamage() 
         
-        # ?
-        chosen = int(random.random() * amount) # random number from array to attack
+        # Choose random player to attack
+        chosen = int(random.random() * amount) 
         
         # If player is currently blocking, reduce damage
         if(block[chosen]):
@@ -129,7 +130,6 @@ def server_program():
         message = "The dragon used " + bossAction
         print(message + " on " + players[chosen].getName()) 
         messageAll(connections, message)
-        
         
         # Make sure client is not overwhelmed 
         time.sleep(1)
