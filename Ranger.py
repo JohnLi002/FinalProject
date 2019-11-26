@@ -19,3 +19,10 @@ class Ranger(Player):
             skillList += "-" + x + "\n"
         
         return skillList
+    
+    def getSkills(self):
+        return self.skills
+    
+    def getClass(self):
+        return "Ranger"
+    

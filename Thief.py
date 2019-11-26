@@ -11,6 +11,7 @@ class Thief(Player):
     def __init__(self, health, name):
         super().__init__(health - 20, name)
         self.skills = ["Poison Coating","Swift Strike","Smoke Bomb"]
+        self.poison = False
         
     def getSkillList(self):
         result = "Thief Skills: \n"
@@ -19,3 +20,18 @@ class Thief(Player):
             result += "-" + x + "\n"
         
         return result
+    
+    def getSkills(self):
+        return self.skills
+    
+    def getClass(self):
+        return "Thief"
+    
+    def poisonCoat(self): #poison coat makes it so that the next attack will cause status affect
+        self.poison = True
+    
+    def swiftStrike(self):
+        damage = (super.attack() + self.buff)*2
+        status = self.poison #checks if the poison is active
+        self.poison = False
+        return status, damage

@@ -8,10 +8,10 @@ import random
 
 class Player: 
     
-    
     def __init__(self, health, name):
         self.__health = health
         self.name = name
+        self.buff = 0
     
     def getHealth(self):
         return self.__health
@@ -30,3 +30,9 @@ class Player:
      
     def getName(self):
         return self.name
+    
+    def setBuff(self, num):
+        self.buff += num
+    
+    def resetBuff(self):
+        self.buff = 0

@@ -19,3 +19,11 @@ class Guardian(Player):
             result += "-" + x + "\n"
         
         return result
+    
+    def getSkills(self):
+        return self.skills
+    
+    def getClass(self):
+        return "Guardian"
+    
+    

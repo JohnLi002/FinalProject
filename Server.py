@@ -35,6 +35,24 @@ def death(player, connections, defense):
     
     return player, defense, connections
 
+def playerActions(conn, Players, num, debuffs):
+    job = Player[num].getClass()
+    
+    while(True):
+        if(job == 'Ranger'):
+            action = conn.recv(1024).decode()
+            if(action == 'Sharp Shot'):
+                print("Sharp Shot")
+                break
+            else:
+                conn.send(Player.getSkillList().encode())
+        elif(job == 'Thief'):
+            print("hi2")
+        elif(job == 'Guardian'):
+            print("hi3")
+        else: #The remaining class must be priest
+            print("hi4")
+
 def server_program():
     # Server Socket
     host = socket.gethostname()
@@ -50,6 +68,7 @@ def server_program():
     players = []
     i = 0 #the counter that will go through the list
     block = []
+    bossDebuff = [] #certain classes will cause debuffs to the boss
     
     while(len(connections) != amount):
         conn, address = server_socket.accept()

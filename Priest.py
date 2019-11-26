@@ -19,3 +19,9 @@ class Priest(Player):
             result += "-" + x + "\n"
         
         return result
+    
+    def getSkills(self):
+        return self.skills
+    
+    def getClass(self):
+        return "Priest"
