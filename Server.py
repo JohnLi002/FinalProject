@@ -2,175 +2,154 @@
 
 import socket, BossDragon, Player, random, time
 
-# Message All Connected Players
+# Message Something to All Players 
 def messageAll(connected, msg):
     for x in connected:
         x.send(msg.encode())
 
-# Display Current Health of Connected Players
+# Update Players Health
 def updateHealth(players):
     message = ""
     for x in players:
-        string = "-" + x.getName() + ": " + x.getHealth() + "\n"
+        string = "-" + x.getName() + ": " + str(x.getHealth()) + "\n"
         message += str(string)
-        
     return message
 
-# Send Back List of Commands if Client Input is not allowed
-def commands (conn):
-    commandHelp = "Commands:\n1 = attack\n2 = block"
+# If action illegal, send list of commands
+def commands (conn): 
+    commandHelp = "Commands:\n1 = attack\n2 = block\n3 = check health"
     conn.send(commandHelp.encode())
 
-# Death Message
+# Close player connection and notify Player's Death to all
 def death(player, connections, defense):
     i = 0
     for p in player:
         if(p.getHealth() <= 0):
-            p.send("Dead".encode())
-            messageAll(connections, p.getName() + " has died")
+            connections[i].send("Dead".encode())
+            messageAll(connections,"#" + p.getName() + " has died")
             del(player[i])
             del(defense[i])
+            del(connections[i])
         else:
             i += 1
-    
-    return player, i
-
+    return player, defense, connections
 
 # Start Server Program
-def server_program():  
+def server_program():
     
     # Initalize Server Socket
     host = socket.gethostname()
-    port = 5000  
+    port = 5000
     server_socket = socket.socket()  
-    server_socket.bind((host, port))  
+    server_socket.bind((host, port))  #
     
-    # Max Clients Allowed
-    amount = 1 
-    
-    # Listens and Takes in Client's connection and username
+    # Configure max allowed connections
+    amount = 2 
     server_socket.listen(amount) 
-    addresses = [] 
-    players = [] 
     
     # Counter to loop through connections
     i = 0 
     
-    # Boolean Array if player is currently blocking
+    # Boolean Array if Player is currently blocking
     block = []
     
-    # Receive Connecting Players
-    while(len(addresses) != amount):
+    # Initalize connections and player usernames
+    connections = []
+    players = []
+    while(len(connections) != amount):
         conn, address = server_socket.accept()
         print("Connection from: " + str(address))
         username = conn.recv(1024).decode()
         print(username)
-        #names.append(username)
-        addresses.append(conn)
-        players.append(Player.Player(100, username)) ###Testing
-        block.append(False)
-        messageAll(addresses, str(len(addresses)) + "/" + str(amount) + " players are connected")
+        connections.append(conn)
+        players.append(Player.Player(1, username)) ###Testing
+        block.append(False) #Question is the block function really a good idea?
+        messageAll(connections, str(len(connections)) + "/" + str(amount) + " players are connected")
     
-    # Notify all players that game is starting
-    messageAll(addresses, "Welcome to the game!")
+    # Message all players start of game
+    messageAll(connections, "Welcome to the game!")
     print("Welcome to the game!")
     
-    ###Everything below here is a test
-    
-    # Initalize Boss
+    # Initalize Boss Object
     boss = BossDragon.BossDragon(100)
     
-    # Continue until boss health < 0
-    while(boss.getHealth() > 0): 
+    # Continue until Boss Health is less than 0
+    while(boss.getHealth() > 0):
         
-        # Players are defeated, exit
-        if(amount == 0): 
+        # Alternate end: Players are defeated, exit 
+        if(amount == 0):
             break
         
-        # Notify Start of Player's Turn
-        chosen = int(random.random() * amount) # random number from array to attack
+        # Notify all clients whose turn it is
         time.sleep(1)
-        message = players[chosen].getName() + "'s turn"
+        message = players[i%amount].getName() + "'s turn"
         print(message)
-        addresses[i%amount].send(message.encode())
+        messageAll(connections,message)
         
-        # Receive Player Input
-        while(True): 
-            action = addresses[i%amount].recv(1024).decode()
+        # Receive Player Action
+        while True: 
+            action = connections[i%amount].recv(1024).decode()
             print(action.lower().strip())
             
-            if(str(action).lower().strip() == 'attack'):
+            if(str(action).lower().strip() == '1'):
                 print(players[i%amount].attack())
                 boss.lossHealth(players[i%amount].attack())
                 break
-            elif(str(action).lower().strip() == 'block'):
+            elif(str(action).lower().strip() == '2'):
                 block[i%amount] = True;
                 break
-            elif(str(action).lower().strip() == 'health'):
-                updateHealth(players)
+            elif(str(action).lower().strip() == '3'):
+                connections[i%amount].send(updateHealth(players).encode())
             else:
-                commands(addresses[i%amount])
+                commands(connections[i%amount])
         
-        # Print Current Status of Boss to all players
+        # Notify all Boss Status
+        time.sleep(1)
         message = "Boss: " + str(boss.getHealth())
         print(message)
-        messageAll(addresses, message)
+        messageAll(connections, message)
         
-        # If player dies, print death message to all players
-        if(players[chosen].getHealth() <= 0):
-            players, amount = death(players, addresses)
-        
-        # Loops through Connected Players
-        i += 1
-        
-        # Boss Attacks
+        # Boss Action
         bossAction, damage = boss.dealDamage() 
         
-        # Player Block Sequence if currently blocking
+        # ?
+        chosen = int(random.random() * amount) # random number from array to attack
+        
+        # If player is currently blocking, reduce damage
         if(block[chosen]):
-            messageAll(addresses, "**" + players[chosen].getName() + " has blocked the attack and miligated the damage!")
+            messageAll(connections, "**" + players[chosen].getName() + " has blocked the attack and miligated the damage!")
             damage -= int(random.random()*10)
             block[chosen] = False
-        players[chosen].takeDamage(int(damage)) # player now takes damage
+        players[chosen].takeDamage(int(damage)) 
         
-        # Prints Boss Actions to all players and current status of player affected.
+        # Make sure client is not overwhelmed 
+        time.sleep(1)
+        
+        # Notify all Boss Action
         message = "The dragon used " + bossAction
-        print(message + " on " + players[chosen].getName()) # prints out what the dragon did
-        messageAll(addresses, message)
+        print(message + " on " + players[chosen].getName()) 
+        messageAll(connections, message)
         
-        # Prints Player Current Health and send status
-        if players[chosen].getHealth() > 0:
-            message = "*" + players[chosen].getName() + ": " + str(players[chosen].getHealth())
-            print(message) 
-            addresses[chosen].send(message.encode())
-        else:
-            message = "*" + players[chosen].getName() + ": Died!"
-            print(message) 
-            addresses[chosen].send(message.encode())
-    
-    conn.close()  # close the connection
+        
+        # Make sure client is not overwhelmed 
+        time.sleep(1)
+        
+        # Update Current Player's Status
+        message = "*" + players[chosen].getName() + ": " + str(players[chosen].getHealth())
+        print(message) 
+        connections[chosen].send(message.encode())
+        
+        # Death Sequence if Player dies
+        if(players[chosen].getHealth() <= 0):
+            players, block, connections = death(players, connections, block)
+            amount = len(connections)
+        
+        # Move on to Next Player
+        i += 1
+        
+    # Close Connection
+    conn.close()  
 # End Server Program
-        
-    
-"""
-    while amount > 0: #while people are within the server
-        data = addresses[i%amount].recv(1024).decode()
-        if not data:
-            # if data is not received break
-            break
-        if data == 'bye': #if a user leaves
-            globalMsg = "[" + names[i%amount] + "] has left the server"
-            print(globalMsg)
-            del(names[i%amount])
-            del(addresses[i%amount])
-            amount -= 1
-            messageAll(addresses, globalMsg)
-        else:
-            print("from [" + names[i%amount] + "]: " + str(data))
-            data = input(' >>>[You]: ')
-            addresses[i%amount].send(data.encode())  # send data to the client
-            i += 1
-"""
 
 if __name__ == '__main__':
     server_program()
