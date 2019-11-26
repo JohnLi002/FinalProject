@@ -9,7 +9,7 @@ from Player import Player
 class Ranger(Player):
 
     def __init__(self, health, name):
-        super().__init__(health, name)
+        super().__init__(health + 50, name)
         self.skills = ["Sharp Shot","Crippling Shot","Collapsing Shot"]
         
     def getSkillList(self):

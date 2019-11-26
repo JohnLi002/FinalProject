@@ -9,7 +9,7 @@ from Player import Player
 
 class Thief(Player):
     def __init__(self, health, name):
-        super().__init__(health, name)
+        super().__init__(health - 20, name)
         self.skills = ["Poison Coating","Swift Strike","Smoke Bomb"]
         
     def getSkillList(self):
