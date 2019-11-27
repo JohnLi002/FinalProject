@@ -31,10 +31,10 @@ class Thief(Player):
         self.poison = True
     
     def swiftStrike(self):
-        damage = (super().attack() + self.buff)*1.5
-        status = self.poison #checks if the poison is active
-        self.poison = False
+        damage = (super().attack() + self.buff)*1
+        if self.poison:
+            damage *= 3
         super().resetBuff() #Buff can only be used for one attack
-        return status, damage
+        return damage
     
     # the server can deal with the action smokebomb as it is solely a debuff

@@ -104,7 +104,7 @@ def server_program():
         print(message)
         messageAll(connections,message)
         
-       
+        
         while(True): #this loop continuously receives actions
             action = connections[i%amount].recv(1024).decode()
             print(action.lower().strip())

@@ -37,33 +37,34 @@ def client_program():#'10.220.112.48'
             print("The dragon has killed you")
             client_socket.close()
             break
-        #At the very start the server returns whose turn it is. The client identifies if it is
-        #their turn by checking if the first part of the message is their name. If it is their
-        #name then then they are allowed actions
+        
+        #Checks to see if it is the clients turn. If it is, they will have the ability to chose their actions
         if(data[0:len(username)] == username): 
             while True:
                 message = input(" -> ")  # take input that the player says for the action
                 client_socket.send(message.encode()) # sends the input
                 data = client_socket.recv(1024).decode()
                 print(data)
-                if(data[0:7] != 'Command' and data[0] != '-'): #If there is a return that isn't a command or given health, break loop
+                
+                #If there is a return that isn't a command or given health, break loop
+                if(data[0:7] != 'Command' and data[0] != '-'): 
                     break
         
+        #continuously loops until there is a message about another person's turn
         while True:
-            data = client_socket.recv(1024).decode()  #messages and continues until the next turn is identified
+            data = client_socket.recv(1024).decode()
             
-            if(data == 'Dead'): #If the player is attacked and dies, the client picks up this special message
+            #If the user gets a special message telling the client that they are dead
+            if(data == 'Dead'): 
                 finished = True #Makes this boolean true
                 data = client_socket.recv(1024).decode() #prints next message
                 print(data) 
-                break #ends this loop to restart the bigger while loop
+                break #breaks this loop
             
             print(data)
-            if(data[0] == '['): #The client identifies the '[' to understands if it is the next turn
+            if(data[0] == '['): #checks to see if message is a net turn message by identifying the '['
                 break
     
-    #client_socket.send(message) #send bye message
-    #client_socket.close()  # close the connection
     
 if __name__ == '__main__':
     client_program()

@@ -36,4 +36,4 @@ class Ranger(Player):
         damage = (super().attack() + self.buff)*1.1
         super().resetBuff()
         
-        return damage
+        return "decDef", damage
