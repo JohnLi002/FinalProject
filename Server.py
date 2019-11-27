@@ -2,8 +2,8 @@
 """
 @author John Li
 """
-import socket, BossDragon, Player, random, time
-import Guardian, Thief, Ranger, Priest
+import socket, BossDragon, Player, random, time, Guardian, Ranger, Priest, Thief
+
 
 
 def messageAll(connected, msg):
@@ -37,7 +37,8 @@ def death(player, connections, defense):
     return player, defense, connections
 
 def playerActions(connections, Players, num, debuffs):
-    job = Player[num].getClass()
+    
+    job = Players[num].getClass()
     
     while(True):
         if(job == 'Ranger'):

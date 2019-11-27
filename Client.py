@@ -9,17 +9,26 @@ def client_program():#'10.220.112.48'
     # data = server string
     # message = client string
     
-    finished = False #represents if player if done
-    
+    loss = False #represents boss victory
+    victory = False #represent player victory
     #create and send server the username based on user input
     username = "[" + input("Username: ") + "]"
     message = username 
     client_socket.send(message.encode()) #sends server the message
     
-    
     data = client_socket.recv(1024).decode() #after join, there is an initial message of how you just joined
     print(data)
     
+    #############################
+    while True:
+        job = input("Choose your job: ")
+        client_socket.send(job.encode())
+        
+        data = client_socket.recv(1024).decode()
+        if(data == "received"):
+            break
+        
+    ######################
     #waits until the server is finished filling up with players
     while(data[0] != data[2]):
         data = client_socket.recv(1024).decode() 
@@ -34,8 +43,11 @@ def client_program():#'10.220.112.48'
     print(data) 
     
     while True: #This loop continues the game
-        if finished: #checks to see if you are dead, if you are the loop ends and the socket is closed
+        if loss: #checks to see if you are dead, if you are the loop ends and the socket is closed
             print("The dragon has killed you")
+            client_socket.close()
+            break
+        elif victory:
             client_socket.close()
             break
         
@@ -57,10 +69,14 @@ def client_program():#'10.220.112.48'
             
             #If the user gets a special message telling the client that they are dead
             if(data == 'Dead'): 
-                finished = True #Makes this boolean true
+                loss = True #Makes this boolean true
                 data = client_socket.recv(1024).decode() #prints next message
                 print(data) 
                 break #breaks this loop
+            elif (data == 'You have won!'):
+                victory = True
+                print(data)
+                break
             
             print(data)
             if(data[0] == '['): #checks to see if message is a net turn message by identifying the '['

@@ -36,5 +36,5 @@ class Guardian(Player):
         return defUp
     
     def shieldBash():
-        
+        return 5
     
