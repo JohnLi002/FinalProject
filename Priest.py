@@ -7,6 +7,7 @@ Created on Sun Nov 17 12:21:17 2019
 """
 
 from Player import Player
+import random
 
 class Priest(Player): 
     def __init__(self, health, name):
@@ -26,3 +27,14 @@ class Priest(Player):
     
     def getClass(self):
         return "Priest"
+    
+    def heal(target):
+        target.setHealth(target.getHealth() + int(random.random()*11 + 10))
+        
+    def holyGlader(self):
+        damage = (super.attack() + self.buff)*1.5
+        self.setHealth(self.getHealth() + int(random.random()*5+1))
+        return damage
+    
+    def statBoost(target):
+        return target.setBuff(15)

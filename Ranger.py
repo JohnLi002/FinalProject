@@ -25,3 +25,4 @@ class Ranger(Player):
     
     def getClass(self):
         return "Ranger"
+    

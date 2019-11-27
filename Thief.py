@@ -29,9 +29,12 @@ class Thief(Player):
     
     def poisonCoat(self): #poison coat makes it so that the next attack will cause status affect
         self.poison = True
+        
     
     def swiftStrike(self):
         damage = (super.attack() + self.buff)*2
         status = self.poison #checks if the poison is active
         self.poison = False
         return status, damage
+    
+    
