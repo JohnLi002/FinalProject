@@ -101,8 +101,10 @@ def server_program():
                 break
         
         connections[len(connections) -1].send("received".encode())
-        block.append(False) 
+        block.append(False)
         messageAll(connections, str(len(connections)) + "/" + str(amount) + " players are connected")
+        
+    time.sleep(1)
     
     #Welcome message sent to all players
     messageAll(connections, "Welcome to the game!")
