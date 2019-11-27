@@ -14,7 +14,7 @@ class Guardian(Player):
         self.skills = ["Taunt","Shield Bash","Protection"]
         
     def getSkillList(self):
-        result = "Guardian Skills: \n"
+        result = "Skills: \n"
         
         for x in self.skills:
             result += "-" + x + "\n"

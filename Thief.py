@@ -14,7 +14,7 @@ class Thief(Player):
         self.poison = False
         
     def getSkillList(self):
-        result = "Thief Skills: \n"
+        result = "Skills: \n"
         
         for x in self.skills:
             result += "-" + x + "\n"

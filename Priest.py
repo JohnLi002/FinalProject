@@ -13,7 +13,7 @@ class Priest(Player):
         self.skills = ["Heal","Holy Glader","Stat Boost"]
         
     def getSkillList(self):
-        result = "Priest Skills: \n"
+        result = "Skills: \n"
         
         for x in self.skills:
             result += "-" + x + "\n"

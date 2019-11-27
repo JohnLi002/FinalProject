@@ -13,7 +13,7 @@ class Ranger(Player):
         self.skills = ["Sharp Shot","Crippling Shot","Collapsing Shot"]
         
     def getSkillList(self):
-        skillList = "Ranger Skills: \n"
+        skillList = "Skills: \n"
         
         for x in self.skills:
             skillList += "-" + x + "\n"

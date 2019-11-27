@@ -1,6 +1,6 @@
 import socket
 
-def client_program():#'10.220.112.48'
+def client_program():
     host = socket.gethostname()  # get IP address of server
     port = 5000  # socket server port number
 
@@ -20,6 +20,7 @@ def client_program():#'10.220.112.48'
     print(data)
     
     #############################
+    
     while True:
         job = input("Choose your job: ")
         client_socket.send(job.encode())
