@@ -3,6 +3,7 @@
 @author John Li
 """
 import socket, BossDragon, Player, random, time
+import Guardian, Thief, Ranger, Priest
 
 
 def messageAll(connected, msg):
@@ -35,17 +36,16 @@ def death(player, connections, defense):
     
     return player, defense, connections
 
-def playerActions(conn, Players, num, debuffs):
+def playerActions(connections, Players, num, debuffs):
     job = Player[num].getClass()
     
     while(True):
         if(job == 'Ranger'):
-            action = conn.recv(1024).decode()
+            action = connections[num].recv(1024).decode()
             if(action == 'Sharp Shot'):
-                print("Sharp Shot")
-                break
+                print('Sharp Shot')
             else:
-                conn.send(Player.getSkillList().encode())
+                connections[num].send(Player.getSkillList().encode())
         elif(job == 'Thief'):
             print("hi2")
         elif(job == 'Guardian'):
@@ -83,7 +83,23 @@ def server_program():
         
         #configure arrays to adjust to new players
         connections.append(conn)
-        players.append(Player.Player(1, username))
+        while True:
+            connections[len(connections) - 1].send("Chose between these classes: Thief, Ranger, Guardian, Priest".encode())
+            message = connections[len(connections)-1].recv(1024).decode()
+            if(message.lower().strip() == 'thief'):
+                players.append(Thief.Thief(100, username))
+                break
+            elif(message.lower().strip() == 'ranger'):
+                players.append(Ranger.Ranger(100, username))
+                break
+            elif(message.lower().strip() == 'guardian'):
+                players.append(Guardian.Guardian(100, username))
+                break
+            elif(message.lower().strip() == 'priest'):
+                players.append(Priest.Priest(100, username))
+                break
+        
+        connections[len(connections) -1].send("received".encode())
         block.append(False) 
         messageAll(connections, str(len(connections)) + "/" + str(amount) + " players are connected")
     

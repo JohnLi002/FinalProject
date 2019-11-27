@@ -16,6 +16,7 @@ def client_program():#'10.220.112.48'
     message = username 
     client_socket.send(message.encode()) #sends server the message
     
+    
     data = client_socket.recv(1024).decode() #after join, there is an initial message of how you just joined
     print(data)
     

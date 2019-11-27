@@ -6,6 +6,7 @@ Created on Sun Nov 17 12:21:32 2019
 """
 
 from Player import Player
+import random
 
 class Guardian(Player):
     def __init__(self, health, name):
@@ -26,4 +27,14 @@ class Guardian(Player):
     def getClass(self):
         return "Guardian"
     
+    def taunt():
+        return "Taunt"
+    
+    def protection():
+        defUp = random.randint(0, 20)
+        
+        return defUp
+    
+    def shieldBash():
+        
     

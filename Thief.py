@@ -34,6 +34,7 @@ class Thief(Player):
         damage = (super().attack() + self.buff)*1
         if self.poison:
             damage *= 3
+            self.poison = False
         super().resetBuff() #Buff can only be used for one attack
         return damage
     
