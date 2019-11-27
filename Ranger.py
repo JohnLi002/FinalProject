@@ -26,3 +26,14 @@ class Ranger(Player):
     def getClass(self):
         return "Ranger"
     
+    def sharpShot(self):
+        damage = (super().attack() + self.buff)*2
+        super().resetBuff()
+        
+        return damage
+    
+    def cripplingShot(self):
+        damage = (super().attack() + self.buff)*1.1
+        super().resetBuff()
+        
+        return damage

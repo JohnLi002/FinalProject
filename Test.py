@@ -4,11 +4,21 @@ Created on Tue Nov 19 16:00:30 2019
 
 @author: lij19
 """
-import Ranger
+import Thief
 
-r = Ranger.Ranger(100,"hi")
-r.setBuff(10)
-r.resetBuff()
+t = Thief.Thief(100, "hi")
 
-print(r.buff)
+t.poisonCoat()
+poison, damage = t.swiftStrike()
+
+print(poison)
+print(damage)
+
+poison, damage = t.swiftStrike()
+print(poison)
+print(damage)
+
+i = 5
+i -= 1.2
+print(i)
 

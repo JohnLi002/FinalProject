@@ -59,37 +59,46 @@ def server_program():
     port = 5000
     server_socket = socket.socket()  # get instance
     server_socket.bind((host, port))  # bind host address and port together
-    # configure how many client the server can listen simultaneously
     
-    amount = 2 #the amount of people that are within the server
-    server_socket.listen(amount) #how many people will be connected at once. This counter closes when a socket closes
-    connections = [] #list of connections
-    #names = [] #list of usernames that will correspond to addresses
-    players = []
-    i = 0 #the counter that will go through the list
+     # Configure max allowed connections
+    amount = int(input("How many players allowed? ")) 
+    print("Waiting for connections...\n")
+    server_socket.listen(amount) 
+    
+    #the counter that will go through the list
+    i = 0
+    
+    #boolean to see if player is currenlty blocking
     block = []
     bossDebuff = [] #certain classes will cause debuffs to the boss
     
+    #Initialize connections
+    connections = []
+    players = []
     while(len(connections) != amount):
         conn, address = server_socket.accept()
         print("Connection from: " + str(address))
         username = conn.recv(1024).decode()
         print(username)
-        #names.append(username)
+        
+        #configure arrays to adjust to new players
         connections.append(conn)
-        players.append(Player.Player(1, username)) ###Testing
-        block.append(False) #question is the block function really a good idea?
+        players.append(Player.Player(1, username))
+        block.append(False) 
         messageAll(connections, str(len(connections)) + "/" + str(amount) + " players are connected")
     
+    #Welcome message sent to all players
     messageAll(connections, "Welcome to the game!")
     print("Welcome to the game!")
     
+    #initialize the boss/enemy/Boss Object
     boss = BossDragon.BossDragon(100)
     while(boss.getHealth() > 0): #continues until dragon is defeated
-        if(amount == 0): #alternate end, players are defeated
+        if(amount == 0): #alternate end, no players left
+            print("All players defeated")
             break
         
-        chosen = int(random.random() * amount) # random number from array to attack
+        #prints out whose turn it is
         time.sleep(1)
         message = players[i%amount].getName() + "'s turn"
         print(message)
@@ -119,28 +128,42 @@ def server_program():
         
         
         bossAction, damage = boss.dealDamage() # boss deals damage and says what was the attack
+        
+        #random number to chose Boss's target
+        chosen = int(random.random() * amount) 
+
+        #check if targeted player is blocking
         if(block[chosen]):
             messageAll(connections, "**" + players[chosen].getName() + " has blocked the attack and miligated the damage!")
             damage -= int(random.random()*10)
             block[chosen] = False
+            
+        #deals damage to player
         players[chosen].takeDamage(int(damage)) # player now takes damage
         time.sleep(1) #to make sure the client is not overwelmed
         
+        #prints out bosses actions and results
         message = "The dragon used " + bossAction
         print(message + " on " + players[chosen].getName()) # prints out what the dragon did
         messageAll(connections, message)
-        
         time.sleep(1)
         message = "*" + players[chosen].getName() + ": " + str(players[chosen].getHealth())
         print(message) #prints out the player's new health
+        messageAll(connections, message)
+        #connections[chosen].send(message.encode())
         
-        connections[chosen].send(message.encode())
+        #checks for death
         if(players[chosen].getHealth() <= 0):
             players, block, connections = death(players, connections, block)
             amount = len(connections)
-        i += 1
+        else:
+            i += 1
         
-
+    #message if players have won
+    if(amount != 0):
+        print("Players have won!")
+        messageAll(connections, "You have won!")
+    
     conn.close()  # close the connection
 
 if __name__ == '__main__':
