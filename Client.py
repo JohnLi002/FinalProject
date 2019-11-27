@@ -9,25 +9,28 @@ def client_program():#'10.220.112.48'
     # data = server string
     # message = client string
     
-    finished = False
-    username = "[" + input("Username: ") + "]" # take input which will be the username associated with the host
-    message = username #the username is now the input
+    finished = False #represents if player if done
+    
+    #create and send server the username based on user input
+    username = "[" + input("Username: ") + "]"
+    message = username 
     client_socket.send(message.encode()) #sends server the message
     
     data = client_socket.recv(1024).decode() #after join, there is an initial message of how you just joined
     print(data)
     
-    while(data[0] != data[2]): #Within the joining message the 1st and 3rd parts there are numbers 
-                               #that represent the queue. If the numbers are the same, the queue is filled
-        data = client_socket.recv(1024).decode()  # receive any othere joining messages which appear every time someone joings
-        print(data) #prints out said message
+    #waits until the server is finished filling up with players
+    while(data[0] != data[2]):
+        data = client_socket.recv(1024).decode() 
+        print(data)
     
-    data = client_socket.recv(1024).decode() #the game will send message "Welcome to the game!"
-    print(data) #prints out previously said message
+    #receive and print welcome message
+    data = client_socket.recv(1024).decode() 
+    print(data)
     
-    
-    data = client_socket.recv(1024).decode() #receives whose turn it is initially
-    print(data) #prints said mmessage
+    #receives and prints out whose initial turn initial turn
+    data = client_socket.recv(1024).decode() 
+    print(data) 
     
     while True: #This loop continues the game
         if finished: #checks to see if you are dead, if you are the loop ends and the socket is closed
