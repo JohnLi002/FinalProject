@@ -32,8 +32,9 @@ class Priest(Player):
         target.setHealth(target.getHealth() + int(random.random()*11 + 10))
         
     def holyGlader(self):
-        damage = (super.attack() + self.buff)*1.5
+        damage = (super.attack() + self.buff)*1.3
         self.setHealth(self.getHealth() + int(random.random()*5+1))
+        super().resetBuff()
         return damage
     
     def statBoost(target):

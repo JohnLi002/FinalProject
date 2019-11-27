@@ -29,12 +29,13 @@ class Thief(Player):
     
     def poisonCoat(self): #poison coat makes it so that the next attack will cause status affect
         self.poison = True
-        
     
     def swiftStrike(self):
-        damage = (super.attack() + self.buff)*2
-        status = self.poison #checks if the poison is active
-        self.poison = False
-        return status, damage
+        damage = (super().attack() + self.buff)*1
+        if self.poison:
+            damage *= 3
+            self.poison = False
+        super().resetBuff() #Buff can only be used for one attack
+        return damage
     
-    
+    # the server can deal with the action smokebomb as it is solely a debuff
