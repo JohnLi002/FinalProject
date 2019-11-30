@@ -2,8 +2,8 @@
 """
 @author John Li
 """
-import socket, BossDragon, Player, random, time
-import Guardian, Thief, Ranger, Priest
+import socket, BossDragon, random, time, Guardian, Ranger, Priest, Thief
+
 
 
 def messageAll(connected, msg):
@@ -37,21 +37,61 @@ def death(player, connections, defense):
     return player, defense, connections
 
 def playerActions(connections, Players, num, debuffs):
-    job = Player[num].getClass()
-    
+    job = Players[num].getClass()
+    damage = 0
     while(True):
+        action = connections[num].recv(1024).decode()
+
         if(job == 'ranger'):
-            action = connections[num].recv(1024).decode()
-            if(action == 'Sharp Shot'):
+            if(action.lower().strip() == '1'):
                 print('Sharp Shot')
+                break
+            elif(action.lower().strip() == '2'):
+                print('crippling shot')
+                break
+            elif(action.lower().strip == '3'):
+                print('collapsing shot')
+                break
             else:
-                connections[num].send(Player.getSkillList().encode())
+                connections[num].send(Players[num].getSkillList().encode())
         elif(job == 'thief'):
-            print("hi2")
+            if(action.lower().strip() == '1'):
+                print('Poison Coat')
+                break
+            elif(action.lower().strip() == '2'):
+                print('Swift Strike')
+                break
+            elif(action.lower().strip == '3'):
+                print('Smoke Bomb')
+                break
+            else:
+                connections[num].send(Players[num].getSkillList().encode())
         elif(job == 'guardian'):
-            print("hi3")
+            if(action.lower().strip() == '1'):
+                print('Taunt')
+                break
+            elif(action.lower().strip() == '2'):
+                print('Shield Bash')
+                break
+            elif(action.lower().strip == '3'):
+                print('Protection')
+                break
+            else:
+                connections[num].send(Players[num].getSkillList().encode())
         else: #The remaining class must be priest
-            print("hi4")
+            if(action.lower().strip() == '1'):
+                print('Heal')
+                break
+            elif(action.lower().strip() == '2'):
+                print('Holy Glader')
+                break
+            elif(action.lower().strip == '3'):
+                print('Stat Boost')
+                break
+            else:
+                connections[num].send(Players[num].getSkillList().encode())
+    
+    return Players, debuffs, damage
 
 def server_program():
     # Server Socket
@@ -70,7 +110,8 @@ def server_program():
     
     #boolean to see if player is currenlty blocking
     block = []
-    bossDebuff = [] #certain classes will cause debuffs to the boss
+    bossDebuffAtk = [] #decreases the boss's attack
+    bossDebuffDef = [] #decreases the boss's defense
     
     #Initialize connections
     connections = []
@@ -100,8 +141,10 @@ def server_program():
                 break
         
         connections[len(connections) -1].send("received".encode())
-        block.append(False) 
-        messageAll(connections, str(len(connections)) + "/" + str(amount) + " players are connected\n")
+        block.append(False)
+        messageAll(connections, str(len(connections)) + "/" + str(amount) + " players are connected")
+        
+    time.sleep(1)
     
     #Welcome message sent to all players
     messageAll(connections, "Welcome to the game!")
@@ -110,6 +153,9 @@ def server_program():
     #initialize the boss/enemy/Boss Object
     boss = BossDragon.BossDragon(100)
     while(boss.getHealth() > 0): #continues until dragon is defeated
+        if(i%amount == 0):
+            bossDebuffAtk.clear()
+            bossDebuffDef.clear()
         if(amount == 0): #alternate end, no players left
             print("All players defeated")
             break
@@ -184,3 +230,7 @@ def server_program():
 
 if __name__ == '__main__':
     server_program()
+
+
+
+    
