@@ -42,7 +42,7 @@ class Ranger(Player):
         return damage
     
     def collapsingShot(self):
-        damage (super().attack + self.buff)*1.1
+        damage = (super().attack + self.buff)*1.1
         super().resetBuff()
         
         return damage
