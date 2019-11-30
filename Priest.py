@@ -14,9 +14,10 @@ class Priest(Player):
         
     def getSkillList(self):
         result = "Skills: \n"
-        
+        i = 1
         for x in self.skills:
-            result += "-" + x + "\n"
+            result += "- " + str(i) + " = " + x + "\n"
+            i += 1
         
         return result
     

@@ -13,12 +13,13 @@ class Ranger(Player):
         self.skills = ["Sharp Shot","Crippling Shot","Collapsing Shot"]
         
     def getSkillList(self):
-        skillList = "Skills: \n"
-        
+        result = "Skills: \n"
+        i = 1
         for x in self.skills:
-            skillList += "-" + x + "\n"
+            result += "- " + str(i) + " = " + x + "\n"
+            i += 1
         
-        return skillList
+        return result
     
     def getSkills(self):
         return self.skills

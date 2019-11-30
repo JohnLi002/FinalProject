@@ -10,14 +10,15 @@ from Player import Player
 class Thief(Player):
     def __init__(self, health, name):
         super().__init__(health - 20, name)
-        self.skills = ["Poison Coating","Swift Strike","Smoke Bomb"]
+        self.skills = ["Poison Coat","Swift Strike","Smoke Bomb"]
         self.poison = False
         
     def getSkillList(self):
         result = "Skills: \n"
-        
+        i = 1
         for x in self.skills:
-            result += "-" + x + "\n"
+            result += "- " + str(i) + " = " + x + "\n"
+            i += 1
         
         return result
     

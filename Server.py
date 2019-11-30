@@ -41,18 +41,58 @@ def playerActions(connections, Players, num, debuffs):
     job = Players[num].getClass()
     
     while(True):
-        if(job == 'Ranger'):
+        if(job == 'ranger'):
             action = connections[num].recv(1024).decode()
-            if(action == 'Sharp Shot'):
+            if(action.lower().strip() == '1'):
                 print('Sharp Shot')
+                break
+            elif(action.lower().strip() == '2'):
+                print('crippling shot')
+                break
+            elif(action.lower().strip == '3'):
+                print('collapsing shot')
+                break
             else:
-                connections[num].send(Player.getSkillList().encode())
-        elif(job == 'Thief'):
-            print("hi2")
-        elif(job == 'Guardian'):
-            print("hi3")
+                connections[num].send(Players[num].getSkillList().encode())
+        elif(job == 'thief'):
+            action = connections[num].recv(1024).decode()
+            if(action.lower().strip() == '1'):
+                print('Poison Coat')
+                break
+            elif(action.lower().strip() == '2'):
+                print('Swift Strike')
+                break
+            elif(action.lower().strip == '3'):
+                print('Smoke Bomb')
+                break
+            else:
+                connections[num].send(Players[num].getSkillList().encode())
+        elif(job == 'guardian'):
+            action = connections[num].recv(1024).decode()
+            if(action.lower().strip() == '1'):
+                print('Poison Coat')
+                break
+            elif(action.lower().strip() == '2'):
+                print('Swift Strike')
+                break
+            elif(action.lower().strip == '3'):
+                print('Smoke Bomb')
+                break
+            else:
+                connections[num].send(Players[num].getSkillList().encode())
         else: #The remaining class must be priest
-            print("hi4")
+            action = connections[num].recv(1024).decode()
+            if(action.lower().strip() == '1'):
+                print('Poison Coat')
+                break
+            elif(action.lower().strip() == '2'):
+                print('Swift Strike')
+                break
+            elif(action.lower().strip == '3'):
+                print('Smoke Bomb')
+                break
+            else:
+                connections[num].send(Players[num].getSkillList().encode())
 
 def server_program():
     # Server Socket
