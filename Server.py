@@ -2,7 +2,7 @@
 """
 @author John Li
 """
-import socket, BossDragon, Player, random, time, Guardian, Ranger, Priest, Thief
+import socket, BossDragon, random, time, Guardian, Ranger, Priest, Thief
 
 
 
@@ -37,12 +37,12 @@ def death(player, connections, defense):
     return player, defense, connections
 
 def playerActions(connections, Players, num, debuffs):
-    
     job = Players[num].getClass()
-    
+    damage = 0
     while(True):
+        action = connections[num].recv(1024).decode()
+
         if(job == 'ranger'):
-            action = connections[num].recv(1024).decode()
             if(action.lower().strip() == '1'):
                 print('Sharp Shot')
                 break
@@ -55,7 +55,6 @@ def playerActions(connections, Players, num, debuffs):
             else:
                 connections[num].send(Players[num].getSkillList().encode())
         elif(job == 'thief'):
-            action = connections[num].recv(1024).decode()
             if(action.lower().strip() == '1'):
                 print('Poison Coat')
                 break
@@ -68,31 +67,31 @@ def playerActions(connections, Players, num, debuffs):
             else:
                 connections[num].send(Players[num].getSkillList().encode())
         elif(job == 'guardian'):
-            action = connections[num].recv(1024).decode()
             if(action.lower().strip() == '1'):
-                print('Poison Coat')
+                print('Taunt')
                 break
             elif(action.lower().strip() == '2'):
-                print('Swift Strike')
+                print('Shield Bash')
                 break
             elif(action.lower().strip == '3'):
-                print('Smoke Bomb')
+                print('Protection')
                 break
             else:
                 connections[num].send(Players[num].getSkillList().encode())
         else: #The remaining class must be priest
-            action = connections[num].recv(1024).decode()
             if(action.lower().strip() == '1'):
-                print('Poison Coat')
+                print('Heal')
                 break
             elif(action.lower().strip() == '2'):
-                print('Swift Strike')
+                print('Holy Glader')
                 break
             elif(action.lower().strip == '3'):
-                print('Smoke Bomb')
+                print('Stat Boost')
                 break
             else:
                 connections[num].send(Players[num].getSkillList().encode())
+    
+    return Players, debuffs, damage
 
 def server_program():
     # Server Socket
