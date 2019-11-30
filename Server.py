@@ -36,32 +36,38 @@ def death(player, connections, defense):
     
     return player, defense, connections
 
-def playerActions(connections, Players, num, debuffs):
+def playerActions(connections, Players, num, attdebuff, defdebuff):
     job = Players[num].getClass()
     damage = 0
+    message = ''
+    
     while(True):
         action = connections[num].recv(1024).decode()
 
         if(job == 'ranger'):
-            if(action.lower().strip() == '1'):
-                print('Sharp Shot')
+            if(action.lower().strip() == '1'): #sharp shot
+                damage = Players[num].sharpShot()
+                message = Players[num].getName() + " used [Sharp Shot]!"
                 break
-            elif(action.lower().strip() == '2'):
-                print('crippling shot')
+            elif(action.lower().strip() == '2'): #crippling shot
+                message = Players[num].getName() + " used [Collapsing Shot]! \n Boss's defense decreased!"
+                damage = Players[num].cripplingShot()
                 break
-            elif(action.lower().strip == '3'):
-                print('collapsing shot')
+            elif(action.lower().strip == '3'): #collapsing shot
+                message = Players[num].getName() + " used [Collapsing Shot]! \n Boss's defense decreased!"
+                damage = Players[num].collapsingShot()
+                defdebuff.append(4)
                 break
             else:
                 connections[num].send(Players[num].getSkillList().encode())
         elif(job == 'thief'):
-            if(action.lower().strip() == '1'):
+            if(action.lower().strip() == '1'): #poison coat
                 print('Poison Coat')
                 break
-            elif(action.lower().strip() == '2'):
+            elif(action.lower().strip() == '2'): #swift strike
                 print('Swift Strike')
                 break
-            elif(action.lower().strip == '3'):
+            elif(action.lower().strip == '3'): #smoke bomb
                 print('Smoke Bomb')
                 break
             else:
@@ -91,7 +97,8 @@ def playerActions(connections, Players, num, debuffs):
             else:
                 connections[num].send(Players[num].getSkillList().encode())
     
-    return Players, debuffs, damage
+    messageAll(connections, message)
+    return Players, attdebuff, defdebuff, damage
 
 def server_program():
     # Server Socket
@@ -168,21 +175,8 @@ def server_program():
         
         
         while(True): #this loop continuously receives actions
-            action = connections[i%amount].recv(1024).decode()
-            print(action.lower().strip())
+            players, bossDebuffAtk, bossDebuffDef, damage = playerActions(connections, players, i%amount, bossDebuffAtk, bossDebuffDef)
             
-            if(str(action).lower().strip() == '1'):
-                print(players[i%amount].attack())
-                boss.lossHealth(players[i%amount].attack())
-                break
-            elif(str(action).lower().strip() == '2'):
-                block[i%amount] = True;
-                break
-            elif(str(action).lower().strip() == '3'):
-                connections[i%amount].send(updateHealth(players).encode())
-            else:
-                commands(connections[i%amount])
-        
         time.sleep(1)
         message = "Boss: " + str(boss.getHealth())
         print(message)
