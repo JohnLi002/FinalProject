@@ -11,6 +11,8 @@ class Ranger(Player):
     def __init__(self, health, name):
         super().__init__(health + 50, name)
         self.skills = ["Sharp Shot","Crippling Shot","Collapsing Shot"]
+        #crippling shot decrease attack
+        #collapsing shot increase next damage dealt
         
     def getSkillList(self):
         result = "Skills: \n"
@@ -34,7 +36,13 @@ class Ranger(Player):
         return damage
     
     def cripplingShot(self):
-        damage = (super().attack() + self.buff)*1.1
+        damage = (super().attack() + self.buff)*1.5
         super().resetBuff()
         
-        return "decDef", damage
+        return damage
+    
+    def collapsingShot(self):
+        damage (super().attack + self.buff)*1.1
+        super().resetBuff()
+        
+        return damage
