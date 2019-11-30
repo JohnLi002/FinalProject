@@ -18,7 +18,7 @@ def client_program():#'10.220.112.48'
     data = client_socket.recv(1024).decode() #after join, there is an initial message of how you just joined
     print(data)
     
-    ###################################### Goal of this segment. Implement the prompt for user to choose their class.
+    #Implement the prompt for user to choose their class.
     while True:
         job = input("Choose your job: ")
         message = job
@@ -28,7 +28,6 @@ def client_program():#'10.220.112.48'
         if(data == "received"):
             break
     
-    ######################################
         
     while(data[0] != data[2]): #Within the joining message the 1st and 3rd parts there are numbers 
                                #that represent the queue. If the numbers are the same, the queue is filled
