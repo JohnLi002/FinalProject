@@ -47,14 +47,14 @@ def playerActions(connections, Players, num, attdebuff, defdebuff):
         if(job == 'ranger'):
             if(action.lower().strip() == '1'): #sharp shot
                 damage = Players[num].sharpShot()
-                message = Players[num].getName() + " used [Sharp Shot]@"
+                message = Players[num].getName() + " used [Sharp Shot]!"
                 break
             elif(action.lower().strip() == '2'): #crippling shot
-                message = Players[num].getName() + " used [collapsing shot]! \n Boss's defense decreased!"
+                message = Players[num].getName() + " used [Collapsing Shot]! \n Boss's defense decreased!"
                 damage = Players[num].cripplingShot()
                 break
             elif(action.lower().strip == '3'): #collapsing shot
-                message = Players[num].getName() + " used [collapsing shot]! \n Boss's defense decreased!"
+                message = Players[num].getName() + " used [Collapsing Shot]! \n Boss's defense decreased!"
                 damage = Players[num].collapsingShot()
                 defdebuff.append(4)
                 break
@@ -98,7 +98,6 @@ def playerActions(connections, Players, num, attdebuff, defdebuff):
                 connections[num].send(Players[num].getSkillList().encode())
     
     messageAll(connections, message)
-    
     return Players, attdebuff, defdebuff, damage
 
 def server_program():
@@ -216,7 +215,6 @@ def server_program():
         message = "*" + players[chosen].getName() + ": " + str(players[chosen].getHealth())
         print(message) #prints out the player's new health
         messageAll(connections, message)
-        #connections[chosen].send(message.encode())
         
         #checks for death
         if(players[chosen].getHealth() <= 0):
