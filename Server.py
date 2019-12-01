@@ -183,8 +183,9 @@ def server_program():
         
         #this loop continuously receives actions
         players, attDebuff, defDebuff, damage = playerActions(connections, players, i%amount, attDebuff, defDebuff)
+        for x in defDebuff:
+            damage += x
         boss.lossHealth(damage)
-            
         time.sleep(1)
         message = "Boss: " + str(boss.getHealth())
         print(message)
