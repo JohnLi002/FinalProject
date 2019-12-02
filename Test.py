@@ -5,8 +5,9 @@ Created on Tue Nov 19 16:00:30 2019
 @author: lij19
 """
 
-def function():
-    return 1
-    print(1)
+import Priest
 
-function()
+p = Priest.Priest(1,"1")
+p2 = Priest.Priest(1,"2")
+p2 = p.heal(p2)
+print(p2.getHealth())

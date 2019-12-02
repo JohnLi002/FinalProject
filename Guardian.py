@@ -12,6 +12,7 @@ class Guardian(Player):
     def __init__(self, health, name):
         super().__init__(health + 100, name)
         self.skills = ["Taunt","Shield Bash","Protection"]
+        self.defense = 0
         
     def getSkillList(self):
         result = "Skills: \n"
@@ -31,10 +32,15 @@ class Guardian(Player):
     def taunt():
         return "Taunt"
     
-    def protection():
+    def protection(self):
         defUp = random.randint(0, 20)
-        return defUp
+        self.defense += defUp
     
     def shieldBash():
         return 5
+    
+    def defending(self):
+        block = self.defense
+        self.defense = 0
+        return block
     

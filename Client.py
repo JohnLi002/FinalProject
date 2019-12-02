@@ -61,7 +61,7 @@ def client_program():
                 print(data)
                 
                 #If there is a return that isn't a command or given health, break loop
-                if(data[0:7] != 'Command' and data[0] != '-'): 
+                if(data[0:6] != 'Skills' and data[0] != '-' and data[0:6] != 'Choose' and data[0:3] != 'Who'): 
                     break
         
         #continuously loops until there is a message about another person's turn
