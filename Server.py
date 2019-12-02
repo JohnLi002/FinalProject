@@ -107,7 +107,7 @@ def playerActions(connections, Players, num, attdebuff, defdebuff, taunt):
                             message = 'healed'
                             break
                     if(message == 'healed'):
-                        message = Players[num] + " has buffed " + person + "!"
+                        message = Players[num].getName() + " has healed " + person + "!"
                         break
                     else:
                         message = "Choose valid players:"
@@ -118,7 +118,7 @@ def playerActions(connections, Players, num, attdebuff, defdebuff, taunt):
                 break
             elif(action.lower().strip() == '2'): #holy glade
                 damage = Players[num].holyGlader()
-                message = Players[num].getName() + " used [Holy Glade]"
+                message = Players[num].getName() + " used [Holy Glade]!"
                 print('Holy Glader')
                 break
             elif(action.lower().strip() == '3'): #stat boost
@@ -132,7 +132,7 @@ def playerActions(connections, Players, num, attdebuff, defdebuff, taunt):
                             message = 'buffed'
                             break
                     if(message == 'buffed'):
-                        message = Players[num] + " has healed " + person + "!"
+                        message = Players[num].getName() + " has buffed " + person + "!"
                         break
                     else:
                         message = "Choose valid players:"
@@ -200,7 +200,11 @@ def server_program():
                 break
         
         connections[len(connections) -1].send("received".encode())
+        time.sleep(1)
+        messageAll(connections, username + " the " + players[len(players) - 1].getClass() + " has joined!")
+        time.sleep(1)
         messageAll(connections, str(len(connections)) + "/" + str(amount) + " players are connected")
+        time.sleep(1)
         
     time.sleep(1)
     
@@ -215,6 +219,10 @@ def server_program():
             print("All players defeated")
             break
         
+        if(i%amount == 0):
+            attDebuff.clear()
+            defDebuff.clear()
+            
         #prints out whose turn it is
         time.sleep(1)
         message = players[i%amount].getName() + "'s turn"
@@ -232,15 +240,24 @@ def server_program():
         print(message)
         messageAll(connections, message)
         
+        if(boss.getHealth() <= 0):
+            break
+        
+        #extra damage from debuffs
+        for x in defDebuff:
+            damage += x
         
         bossAction, damage = boss.dealDamage() # boss deals damage and says what was the attack
         
         #random number to chose Boss's target
         chosen = int(random.random() * amount) 
-
-        #deals damage to player
         
-        players[chosen].takeDamage(newDamage(damage, attDebuff)) # player now takes damage
+        #taunt changes target
+        if(taunt != -1):
+            chosen = taunt
+            if(i%amount == 0):
+                taunt = -1
+       
         time.sleep(1) #to make sure the client is not overwelmed
         
         #prints out bosses actions and results
@@ -248,6 +265,21 @@ def server_program():
         print(message + " on " + players[chosen].getName()) # prints out what the dragon did
         messageAll(connections, message)
         time.sleep(1)
+        
+         
+        #deals damage to player
+        attDebuff, damage = newDamage(damage, attDebuff)
+        
+        #New damage with guardian class
+        if(players[chosen].getClass() == 'guardian'):
+            damage -= players[chosen].defending()
+            messageAll(connections, "- " + players[chosen].getName() + " has mitigated the damage")
+            if(damage < 0):
+                damage = 0
+            time.sleep(1)
+        
+        players[chosen].takeDamage(damage) # player now takes damage
+        
         message = "*" + players[chosen].getName() + ": " + str(players[chosen].getHealth())
         print(message) #prints out the player's new health
         messageAll(connections, message)

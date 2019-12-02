@@ -36,8 +36,11 @@ class Guardian(Player):
         defUp = random.randint(0, 20)
         self.defense += defUp
     
-    def shieldBash():
-        return 5
+    def shieldBash(self):
+        damage = (super().attack() + self.buff)*1.5
+        self.resetBuff()
+        
+        return damage
     
     def defending(self):
         block = self.defense
