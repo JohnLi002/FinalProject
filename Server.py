@@ -32,6 +32,8 @@ def death(player, connections):
     
     return player, connections
 
+################################### 
+
 def playerActions(connections, Players, num, attdebuff, attTimer, defdebuff, defTimer, taunt):
     damage = 0
     message = ''
@@ -150,6 +152,8 @@ def playerActions(connections, Players, num, attdebuff, attTimer, defdebuff, def
     messageAll(connections, message)
     return Players, attdebuff, attTimer, defdebuff, defTimer, damage, taunt
 
+###################################################
+    
 def newDamage(damage, debuffs):
     for x in debuffs:
         damage -= x
@@ -276,7 +280,7 @@ def server_program():
                 print(str(defTimer[place]) + "/2 turns | " + str(defDebuff[place]) + " decrease to att")
                 place += 1
             
-
+######################################################################
                     
         #prints out whose turn it is
         time.sleep(1)
