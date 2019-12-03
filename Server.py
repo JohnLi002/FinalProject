@@ -32,11 +32,12 @@ def death(player, connections):
     
     return player, connections
 
-def playerActions(connections, Players, num, attdebuff, defdebuff, taunt):
-    job = Players[num].getClass().lower().strip()
+def playerActions(connections, Players, num, attdebuff, attTimer, defdebuff, defTimer, taunt):
     damage = 0
     message = ''
-    
+    num = num%len(connections)
+    job = Players[num].getClass().lower().strip()
+
     while(True):
         action = connections[num].recv(1024).decode()
 
@@ -47,15 +48,17 @@ def playerActions(connections, Players, num, attdebuff, defdebuff, taunt):
                 print('Sharp Shot')
                 break
             elif(action.lower().strip() == '2'): #crippling shot
-                message = Players[num].getName() + " used [Collapsing Shot]! \nBoss's attack decreased!"
+                message = Players[num].getName() + " used [Crippling Shot]! \nBoss's attack decreased!"
                 damage = Players[num].cripplingShot()
                 attdebuff.append(3)
+                attTimer.append(0)
                 print('Crippling Shot')
                 break
             elif(action.lower().strip() == '3'): #collapsing shot
                 message = Players[num].getName() + " used [Collapsing Shot]! \nBoss's defense decreased!"
                 damage = Players[num].collapsingShot()
                 defdebuff.append(3)
+                defTimer.append(0)
                 print('collapsing shot')
                 break
             else:
@@ -72,6 +75,7 @@ def playerActions(connections, Players, num, attdebuff, defdebuff, taunt):
                 break
             elif(action.lower().strip() == '3'): #smoke bomb
                 attdebuff.append(-5)
+                attTimer.append(0)
                 message = Players[num].getName() + " used [Smoke Bomb]! \nThe bosses attack has weakened!"
                 print('Smoke Bomb')
                 break
@@ -144,14 +148,18 @@ def playerActions(connections, Players, num, attdebuff, defdebuff, taunt):
                 connections[num].send(Players[num].getSkillList().encode())
     
     messageAll(connections, message)
-    return Players, attdebuff, defdebuff, damage, taunt
+    return Players, attdebuff, attTimer, defdebuff, defTimer, damage, taunt
 
 def newDamage(damage, debuffs):
     for x in debuffs:
         damage -= x
+        
+    if damage < 0:
+        damage = 0
     
-    debuffs.clear()
-    return debuffs, damage
+    return damage
+
+
 
 def server_program():
     # Server Socket
@@ -170,8 +178,11 @@ def server_program():
     
     #debuffs
     attDebuff = []
+    attTimer = []
     defDebuff = []
+    defTimer = []
     taunt = -1
+    
     #Initialize connections
     connections = []
     players = []
@@ -206,7 +217,6 @@ def server_program():
         messageAll(connections, str(len(connections)) + "/" + str(amount) + " players are connected")
         time.sleep(1)
         
-    time.sleep(1)
     
     #Welcome message sent to all players
     messageAll(connections, "Welcome to the game!")
@@ -219,10 +229,55 @@ def server_program():
             print("All players defeated")
             break
         
+        #calculates duration of debuffs
         if(i%amount == 0):
-            attDebuff.clear()
-            defDebuff.clear()
+            ### Attack Debuffs
+            place = 0
             
+            while place < len(attTimer):
+                attTimer[place] += 1
+                place += 1
+            
+            # Delete expired attack debuff
+            place = 0
+            while True:
+                if(place == len(attTimer)):
+                    break
+                if(attTimer[place] == 3):
+                    del(attTimer[place])
+                else:
+                    place += 1
+                
+            ## Printing out attack Debuffs
+            place = 0
+            while place < len(attTimer):
+                print(str(attTimer[place]) + "/2 turns | " + str(attDebuff[place]) + " decrease to att")
+                place += 1
+            
+            
+            ### Defense Debuffs
+            place = 0
+            while place < len(defTimer):
+                defTimer[place] += 1
+                place += 1
+                
+            place = 0
+            while True:
+                if(place == len(defTimer)):
+                    break
+                if(defTimer[place] == 3):
+                    del(defTimer[place])
+                else:
+                    place += 1
+            
+            
+            place = 0
+            while place < len(defTimer):
+                print(str(defTimer[place]) + "/2 turns | " + str(defDebuff[place]) + " decrease to att")
+                place += 1
+            
+
+                    
         #prints out whose turn it is
         time.sleep(1)
         message = players[i%amount].getName() + "'s turn"
@@ -231,7 +286,7 @@ def server_program():
         
         
         #this loop continuously receives actions
-        players, attDebuff, defDebuff, damage, taunt = playerActions(connections, players, i%amount, attDebuff, defDebuff, taunt)
+        players, attDebuff, attTimer, defDebuff, defTimer, damage, taunt = playerActions(connections, players, i, attDebuff, attTimer, defDebuff, defTimer, taunt)
         boss.lossHealth(damage)
         
         
@@ -268,7 +323,7 @@ def server_program():
         
          
         #deals damage to player
-        attDebuff, damage = newDamage(damage, attDebuff)
+        damage = newDamage(damage, attDebuff)
         
         #New damage with guardian class
         if(players[chosen].getClass() == 'guardian'):
