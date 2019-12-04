@@ -79,7 +79,7 @@ def playerActions(connections, Players, num, attdebuff, attTimer, defdebuff, def
                 print('Swift Strike')
                 break
             elif(action.lower().strip() == '3'): #smoke bomb
-                attdebuff.append(-5)
+                attdebuff.append(5)
                 attTimer.append(0)
                 message = Players[num].getName() + " used [Smoke Bomb]! \nThe bosses attack has weakened!"
                 print('Smoke Bomb')
@@ -99,7 +99,7 @@ def playerActions(connections, Players, num, attdebuff, attTimer, defdebuff, def
                 break
             elif(action.lower().strip() == '3'): #protection
                 Players[num].protection()
-                message = Players[num].getName() + " used Protection! \nThey prepare themselves for the enxt blow"
+                message = Players[num].getName() + " used Protection! \nThey prepare themselves for the next blow"
                 print('Protection')
                 break
             else:
