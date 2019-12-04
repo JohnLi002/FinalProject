@@ -21,26 +21,25 @@ class Guardian(Player):
         
         return result
     
-    def getSkills(self):
+    def getSkills(self): #return list of skills
         return self.skills
     
-    def getClass(self):
+    def getClass(self): #identify class
         return "Guardian"
     
-    def taunt():
-        return "Taunt"
     
-    def protection(self):
+    def protection(self): #increase def
         defUp = random.randint(0, 20)
         self.defense += defUp
     
-    def shieldBash(self):
+    #return attack based on player attack method and buffs
+    def shieldBash(self): 
         damage = (super().attack() + self.buff)*1.5
         self.resetBuff()
         
         return damage
     
-    def defending(self):
+    def defending(self): #return def
         block = self.defense
         self.defense = 0
         return block

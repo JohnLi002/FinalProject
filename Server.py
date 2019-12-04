@@ -42,7 +42,8 @@ def playerActions(connections, Players, num, attdebuff, attTimer, defdebuff, def
     num = num%len(connections)
     job = Players[num].getClass().lower().strip()
 
-    while(True): #results depends of player's class
+    while(True): #takes in either 1,2,or3 and the effects are based on player class
+                 #Different classes = different skills = different ways for the server to handle command
         action = connections[num].recv(1024).decode()
 
         if(job == 'ranger'):
@@ -155,7 +156,8 @@ def playerActions(connections, Players, num, attdebuff, attTimer, defdebuff, def
     return Players, attdebuff, attTimer, defdebuff, defTimer, damage, taunt
 
 ###################################################
-    
+
+#returns new damage by decreasing damage done with the numbers in debuffs array/list
 def newDamage(damage, debuffs):
     for x in debuffs:
         damage -= x
@@ -171,7 +173,8 @@ def server_program():
     # Server Socket
     host = socket.gethostname()
     port = 5000
-    server_socket = socket.socket()  # get instance
+    #TCP connection
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # get instance
     server_socket.bind((host, port))  # bind host address and port together
     
      # Configure max allowed connections
@@ -194,13 +197,13 @@ def server_program():
     players = []
     while(len(connections) != amount):
         conn, address = server_socket.accept()
-        print("Connection from: " + str(address))
+        print("Connection from: " + str(address)) #prints in server who was connected
         username = conn.recv(1024).decode()
         print(username)
         
         #configure arrays to adjust to new players
         connections.append(conn)
-        while True:
+        while True: #new client is forced to chose class, based on input a class object is created in put in Players array
             connections[len(connections) - 1].send("Chose between these classes: Thief, Ranger, Guardian, Priest".encode())
             message = connections[len(connections)-1].recv(1024).decode()
             if(message.lower().strip() == 'thief'):
@@ -257,6 +260,7 @@ def server_program():
             ## Printing out attack Debuffs
             place = 0
             while place < len(attTimer):
+                #logs message by printing in server
                 print(str(attTimer[place]) + "/2 turns | " + str(attDebuff[place]) + " decrease to att")
                 place += 1
             
@@ -268,6 +272,7 @@ def server_program():
                 place += 1
                 
             place = 0
+            # Delete expired buffs within list
             while True:
                 if(place == len(defTimer)):
                     break
@@ -279,6 +284,7 @@ def server_program():
             
             place = 0
             while place < len(defTimer):
+                #logs messages by printing in server
                 print(str(defTimer[place]) + "/2 turns | " + str(defDebuff[place]) + " decrease to att")
                 place += 1
             
@@ -291,7 +297,7 @@ def server_program():
         messageAll(connections,message)
         
         
-        #this loop continuously receives actions
+        #this function/method is what takes in player's commands and dictates what is changed
         players, attDebuff, attTimer, defDebuff, defTimer, damage, taunt = playerActions(connections, players, i, attDebuff, attTimer, defDebuff, defTimer, taunt)
         boss.lossHealth(damage)
         
@@ -331,7 +337,7 @@ def server_program():
         #deals damage to player
         damage = newDamage(damage, attDebuff)
         
-        #New damage with guardian class
+        #New damage with guardian class as defense of player decreases attack
         if(players[chosen].getClass() == 'guardian'):
             damage -= players[chosen].defending()
             messageAll(connections, "- " + players[chosen].getName() + " has mitigated the damage")
@@ -342,10 +348,10 @@ def server_program():
         players[chosen].takeDamage(damage) # player now takes damage
         
         message = "*" + players[chosen].getName() + ": " + str(players[chosen].getHealth())
-        print(message) #prints out the player's new health
+        print(message) #prints out the player's new health and tells other players
         messageAll(connections, message)
         
-        #checks for death
+        #checks if any players have died
         if(players[chosen].getHealth() <= 0):
             players, connections = death(players, connections)
             amount = len(connections)

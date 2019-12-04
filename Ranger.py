@@ -21,10 +21,10 @@ class Ranger(Player):
         
         return result
     
-    def getSkills(self):
+    def getSkills(self): #return skill array
         return self.skills
     
-    def getClass(self):
+    def getClass(self): #return class
         return "Ranger"
     
     def sharpShot(self):

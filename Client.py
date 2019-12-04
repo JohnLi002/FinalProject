@@ -8,7 +8,8 @@ def client_program():
     host = socket.gethostname()  # get IP address of server
     port = 5000  # socket server port number
 
-    client_socket = socket.socket()  # instantiate
+    #TCP connection
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # instantiate
     client_socket.connect((host, port))  # connect to the server
     # data = server string
     # message = client string

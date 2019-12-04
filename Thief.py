@@ -11,7 +11,7 @@ class Thief(Player):
         self.skills = ["Poison Coat","Swift Strike","Smoke Bomb"]
         self.poison = False
         
-    def getSkillList(self):
+    def getSkillList(self): #return string of the skill list
         result = "Skills: \n"
         i = 1
         for x in self.skills:
@@ -36,5 +36,3 @@ class Thief(Player):
             self.poison = False
         super().resetBuff() #Buff can only be used for one attack
         return damage
-    
-    # the server can deal with the action smokebomb as it is solely a debuff
