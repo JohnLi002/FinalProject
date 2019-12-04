@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Nov 19 16:41:06 2019
-
-@author: lij19
+@author: John Li, John Khuc, Tony Lei
 """
 import random
 

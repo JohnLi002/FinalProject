@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-@author John Li
+@author: John Li, John Khuc, Tony Lei
 """
 import socket, BossDragon, random, time, Guardian, Ranger, Priest, Thief
 
 
-
+#send message to every connection in the array
 def messageAll(connected, msg):
     for x in connected:
         x.send(msg.encode())
+
 
 def updateHealth(players):
     message = ""
@@ -19,6 +20,7 @@ def updateHealth(players):
     return message
 
 
+#checks if any of the players are dead(0 hp) sends a message to a dead player and announces death
 def death(player, connections):
     i = 0
     for p in player:
@@ -40,7 +42,7 @@ def playerActions(connections, Players, num, attdebuff, attTimer, defdebuff, def
     num = num%len(connections)
     job = Players[num].getClass().lower().strip()
 
-    while(True):
+    while(True): #results depends of player's class
         action = connections[num].recv(1024).decode()
 
         if(job == 'ranger'):

@@ -1,3 +1,7 @@
+"""
+@author: John Li, John Khuc, Tony Lei
+"""
+
 import socket
 
 def client_program():

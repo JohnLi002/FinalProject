@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Nov 17 12:21:32 2019
-
-@author: leix
+@author: John Li, John Khuc, Tony Lei
 """
 
 from Player import Player
